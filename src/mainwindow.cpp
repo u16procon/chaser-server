@@ -373,8 +373,9 @@ void MainWindow::Finish(GameSystem::WINNER winner){
         this->ui->WinnerLabel->setText("DRAW");
         log << getTime() + "[決着]引き分けです。" << "\r\n";
     }
-    GameBoard*& board = this->ui->Field;
     /*
+    GameBoard*& board = this->ui->Field;
+
     for(int i=0;i<TEAM_COUNT;i++){
         startup->team_client[player]->client->WaitGetReady();
         startup->team_client[player]->client->WaitReturnMethod(ui->Field->FieldAccessAround(GameSystem::Method{static_cast<GameSystem::TEAM>(player),

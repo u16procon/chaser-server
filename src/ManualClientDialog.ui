@@ -161,9 +161,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="SeachRadio">
+        <widget class="QRadioButton" name="SearchRadio">
          <property name="text">
-          <string>SeachAction</string>
+          <string>SearchAction</string>
          </property>
         </widget>
        </item>
