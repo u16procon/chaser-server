@@ -24,7 +24,7 @@ public:
     //親のシグナルスロットが終わりしだい呼び出される関数
     virtual void Startup();
 
-    explicit BaseClient(QObject *parent = 0);
+    explicit BaseClient(QObject *parent = nullptr);
     virtual ~BaseClient();
 
 signals:

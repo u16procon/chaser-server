@@ -22,7 +22,7 @@ QString TCPClient::WaitResponce(){
             QString response = "";
 
             //自動結合
-            bool f = false;
+            //bool f = false;
             do{
                 response += client->readLine();
             }while(*(response.end()-1) != '\n' && this->client->waitForReadyRead(this->TIMEOUT));
@@ -115,7 +115,7 @@ bool TCPClient::isConnecting(){
 }
 void TCPClient::NewConnect(){
     this->client = this->server->nextPendingConnection();
-    this->IP     = this->client->localAddress().toString();
+    this->IP     = this->client->peerAddress().toString();
     connect(this->client,SIGNAL(readyRead()),this,SLOT(GetTeamName()));
     connect(this->client,SIGNAL(disconnected()),this,SLOT(DisConnect()));
     emit Connected();
