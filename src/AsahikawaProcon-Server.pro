@@ -57,13 +57,12 @@ FORMS    += mainwindow.ui \
     DesignDialog.ui
 
 RESOURCES += \
-    Resource.qrc
+    image.qrc \
+    music.qrc
 
 win32:{
-    DEFINES += OS_WIN32
-    RC_FILE += icons.rc
+    RC_FILE += icon.rc
 }
 mac:{
-    DEFINES += OS_MACOSX
-    RESOURCES += Music.qrc
+    ICON += icon.icns
 }
