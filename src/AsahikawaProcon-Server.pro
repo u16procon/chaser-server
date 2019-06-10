@@ -61,7 +61,7 @@ RESOURCES += \
     music.qrc
 
 win32:{
-    RC_FILE += icon.rc
+    ICON += icon.ico
 }
 mac:{
     ICON += icon.icns
