@@ -123,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Music/" + this->startup->music_text + ".wav"));
+        bgm->setMedia(QUrl("qrc:/Music/" + this->startup->music_text + ".mp3"));
         bgm->setVolume(50);
         bgm->play();
     }
@@ -346,7 +346,7 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Music/ji_023.wav"));
+        bgm->setMedia(QUrl("qrc:/Music/ji_023.mp3"));
         bgm->setVolume(50);
         bgm->play();
     }
