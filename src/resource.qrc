@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Image/Heavy/Blind.png</file>
+        <file>Image/Heavy/Block.png</file>
+        <file>Image/Heavy/Cool.png</file>
+        <file>Image/Heavy/Floor.png</file>
+        <file>Image/Heavy/Getready.png</file>
+        <file>Image/Heavy/Hot.png</file>
+        <file>Image/Heavy/Item.png</file>
+        <file>Image/Heavy/Look.png</file>
+        <file>Image/Heavy/Search.png</file>
+
+        <file>Image/Jewel/Blind.png</file>
+        <file>Image/Jewel/Block.png</file>
+        <file>Image/Jewel/Cool.png</file>
+        <file>Image/Jewel/Floor.png</file>
+        <file>Image/Jewel/Getready.png</file>
+        <file>Image/Jewel/Hot.png</file>
+        <file>Image/Jewel/Item.png</file>
+        <file>Image/Jewel/Look.png</file>
+        <file>Image/Jewel/Search.png</file>
+
+        <file>Image/Light/Blind.png</file>
+        <file>Image/Light/Block.png</file>
+        <file>Image/Light/Cool.png</file>
+        <file>Image/Light/Floor.png</file>
+        <file>Image/Light/Getready.png</file>
+        <file>Image/Light/Hot.png</file>
+        <file>Image/Light/Item.png</file>
+        <file>Image/Light/Look.png</file>
+        <file>Image/Light/Search.png</file>
+
+        <file>Music/ji_023.wav</file>
+    </qresource>
+</RCC>

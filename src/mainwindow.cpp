@@ -13,13 +13,13 @@ QString convertString(GameSystem::Method method){
     if(method.action == GameSystem::Method::ACTION::GETREADY)str += "GetReady";
     if(method.action == GameSystem::Method::ACTION::LOOK)    str += "Look";
     if(method.action == GameSystem::Method::ACTION::PUT)     str += "Put";
-    if(method.action == GameSystem::Method::ACTION::SEARCH)   str += "Search";
+    if(method.action == GameSystem::Method::ACTION::SEARCH)  str += "Search";
     if(method.action == GameSystem::Method::ACTION::WALK)    str += "Walk";
 
-    if(method.rote == GameSystem::Method::ROTE::UP)str += "Up";
+    if(method.rote == GameSystem::Method::ROTE::UP)   str += "Up";
     if(method.rote == GameSystem::Method::ROTE::RIGHT)str += "Right";
-    if(method.rote == GameSystem::Method::ROTE::LEFT)str += "Left";
-    if(method.rote == GameSystem::Method::ROTE::DOWN)str += "Down";
+    if(method.rote == GameSystem::Method::ROTE::LEFT) str += "Left";
+    if(method.rote == GameSystem::Method::ROTE::DOWN) str += "Down";
 
     return str;
 }
@@ -123,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Music/" + this->startup->music_text + ".mp3"));
+        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text + ".wav"));
         bgm->setVolume(50);
         bgm->play();
     }
@@ -346,7 +346,7 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Music/ji_023.mp3"));
+        bgm->setMedia(QUrl("qrc:/Music/ji_023.wav"));
         bgm->setVolume(50);
         bgm->play();
     }
