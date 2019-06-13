@@ -57,8 +57,7 @@ FORMS    += mainwindow.ui \
     DesignDialog.ui
 
 RESOURCES += \
-    image.qrc \
-    music.qrc
+    resource.qrc
 
 win32:{
     ICON += icon.ico
