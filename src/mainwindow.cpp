@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QMediaPlayer>
+#include <QSharedPointer>
 #include "Definition.h"
 
 QString getTime(){
@@ -28,7 +29,7 @@ QString convertString(GameSystem::Method method){
 void MainWindow::keyPressEvent(QKeyEvent * event){
     //縦に比率を合わせる
     if(event->key()==Qt::Key_F){
-        int left_margin=0,right_margin=0;
+        int left_margin=0, right_margin=0;
         this->ui->centralWidget->layout()->getContentsMargins(&left_margin,nullptr,&right_margin,nullptr);
         this->ui->Field->resize((static_cast<float>(this->ui->Field->size().height())/ui->Field->field.size.y())*ui->Field->field.size.x(),this->ui->Field->size().height());
         this->resize(QSize(this->ui->Field->width() + left_margin + right_margin,this->size().height()));
@@ -40,16 +41,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->startup = new StartupDialog();
+    this->startup = QSharedPointer<StartupDialog>::create();
     this->win = GameSystem::WINNER::CONTINUE;
 
-    connect(this,SIGNAL(destroyed()),this,SLOT(SaveFile()));
+    //connect(this,SIGNAL(destroyed()),this,SLOT(SaveFile()));
 
     //ServerSetting読み込み
     QString path;
-    QSettings* mSettings;
+    QSharedPointer<QSettings> mSettings;
     QVariant v;
-    mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    mSettings = QSharedPointer<QSettings>::create( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v = mSettings->value( "LogFilepath" );
     if (v.type() != QVariant::Invalid)path = v.toString();
@@ -63,9 +64,9 @@ MainWindow::MainWindow(QWidget *parent) :
     if (v.type() != QVariant::Invalid)anime_team_time = v.toInt();
 
     //デザイン設定を書き換え
-    QSettings* dSettings;
+    QSharedPointer<QSettings> dSettings;
     QVariant v2;
-    dSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    dSettings = QSharedPointer<QSettings>::create( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v2 = dSettings->value( "Dark" );
     if (v2.type() != QVariant::Invalid)dark = v2.toBool();
@@ -110,8 +111,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     player = 0;
 
-    startup_anime = new QTimer();
-    connect(startup_anime,SIGNAL(timeout()),this,SLOT(StartAnimation()));
+    startup_anime = QSharedPointer<QTimer>::create();
+    connect(startup_anime.data(), SIGNAL(timeout()), this, SLOT(StartAnimation()));
     startup_anime->start(anime_map_time / (startup->map.size.x()*startup->map.size.y()));
 
     /*
@@ -121,8 +122,8 @@ MainWindow::MainWindow(QWidget *parent) :
     */
 
     if(!silent){
-        bgm = new QMediaPlayer;
-        connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+        bgm = QSharedPointer<QMediaPlayer>::create();
+        connect(bgm.data(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text + ".wav"));
         bgm->setVolume(50);
         bgm->play();
@@ -154,13 +155,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //AnimationTime読み込み
-    mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    mSettings = QSharedPointer<QSettings>::create( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     v = mSettings->value( "Map" );
     if (v.type() != QVariant::Invalid)anime_map_time = v.toInt();
     else{
 
-        QSettings* mSettings;
-        mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+        QSharedPointer<QSettings> mSettings;
+        mSettings = QSharedPointer<QSettings>::create( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
         mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
         mSettings->setValue( "Map" , anime_map_time );
@@ -174,11 +175,11 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+/*
 void MainWindow::SaveFile(){
     file->close();
 }
-
+*/
 void MainWindow::StepGame(){
     //ゲーム進行
     static GameSystem::Method team_mehod[TEAM_COUNT];
@@ -344,8 +345,8 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     if(!silent)bgm->stop();
 
     if(!silent){
-        bgm = new QMediaPlayer;
-        connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+        bgm = QSharedPointer<QMediaPlayer>::create();
+        connect(bgm.data(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setMedia(QUrl("qrc:/Music/ji_023.wav"));
         bgm->setVolume(50);
         bgm->play();
@@ -525,10 +526,10 @@ void MainWindow::StartAnimation(){
         }
     }
     if(timer >= startup->map.size.x() * startup->map.size.y()){
-        teamshow_anime = new QTimer();
-        connect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+        teamshow_anime = QSharedPointer<QTimer>::create();
+        connect(teamshow_anime.data(), SIGNAL(timeout()), this, SLOT(ShowTeamAnimation()));
         teamshow_anime->start(anime_team_time/TEAM_COUNT);
-        disconnect(startup_anime,SIGNAL(timeout()),this,SLOT(StartAnimation()));
+        disconnect(startup_anime.data(), SIGNAL(timeout()), this, SLOT(StartAnimation()));
     }
     timer += 2;
     repaint();
@@ -542,15 +543,15 @@ void MainWindow::ShowTeamAnimation(){
 
     if(team_count == TEAM_COUNT){
         if(dark == true){
-            blind_anime = new QTimer();
-            connect(blind_anime,SIGNAL(timeout()),this,SLOT(BlindAnimation()));
+            blind_anime = QSharedPointer<QTimer>::create();
+            connect(blind_anime.data(), SIGNAL(timeout()), this, SLOT(BlindAnimation()));
             blind_anime->start(anime_blind_time / (startup->map.size.x()*startup->map.size.y()));
-            disconnect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+            disconnect(teamshow_anime.data(), SIGNAL(timeout()), this, SLOT(ShowTeamAnimation()));
         }else{
-            clock = new QTimer();
-            connect(clock,SIGNAL(timeout()),this,SLOT(StepGame()));
+            clock = QSharedPointer<QTimer>::create();
+            connect(clock.data(), SIGNAL(timeout()), this, SLOT(StepGame()));
             clock->start(FRAME_RATE);
-            disconnect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+            disconnect(teamshow_anime.data(), SIGNAL(timeout()), this, SLOT(ShowTeamAnimation()));
         }
     }else{
         ui->Field->field.discover[ui->Field->team_pos[team_count].y()]
@@ -583,10 +584,10 @@ void MainWindow::BlindAnimation(){
     if(timer >= startup->map.size.x() * startup->map.size.y()){
         for(auto& v : this->ui->Field->field.discover)v = QVector<GameSystem::Discoverer>
                 (this->ui->Field->field.size.x(),GameSystem::Discoverer::Unknown);
-        clock = new QTimer();
-        connect(clock,SIGNAL(timeout()),this,SLOT(StepGame()));
+        clock = QSharedPointer<QTimer>::create();
+        connect(clock.data(), SIGNAL(timeout()), this, SLOT(StepGame()));
         clock->start(FRAME_RATE);
-        disconnect(blind_anime,SIGNAL(timeout()),this,SLOT(BlindAnimation()));
+        disconnect(blind_anime.data(), SIGNAL(timeout()), this, SLOT(BlindAnimation()));
     }
     timer += 2;
     repaint();

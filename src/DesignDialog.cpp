@@ -2,6 +2,7 @@
 #include "ui_DesignDialog.h"
 #include "qsettings.h"
 #include "qmessagebox.h"
+#include <QSharedPointer>
 
 DesignDialog::DesignDialog(QWidget *parent) :
     QDialog(parent),
@@ -9,8 +10,8 @@ DesignDialog::DesignDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QSettings* mSettings;
-    mSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    QSharedPointer<QSettings> mSettings;
+    mSettings = QSharedPointer<QSettings>::create( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     QVariant v = mSettings->value( "Dark" );
@@ -39,8 +40,8 @@ bool DesignDialog::GetCheckBot() const {
 
 void DesignDialog::Export(){
 
-    QSettings* mSettings;
-    mSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    QSharedPointer<QSettings> mSettings;
+    mSettings = QSharedPointer<QSettings>::create( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     mSettings->setValue( "Dark"    , GetCheckDark());
