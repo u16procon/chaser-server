@@ -1,5 +1,6 @@
 #include "ManualClient.h"
 #include <QEventLoop>
+#include <QSharedPointer>
 
 void ManualClient::closeEvent(){
     emit Disconnected();
@@ -16,7 +17,7 @@ GameSystem::Method ManualClient::WaitReturnMethod(GameSystem::AroundData data){
 
     //GUIレスポンス待ち
     QEventLoop eventLoop;
-    QDialog::connect(diag, SIGNAL(ReadyAction()), &eventLoop, SLOT(quit()));
+    QDialog::connect(diag.data(), SIGNAL(ReadyAction()), &eventLoop, SLOT(quit()));
     QDialog::connect(this, SIGNAL(Disconnected()), &eventLoop, SLOT(quit()));
     eventLoop.exec();//GUIからのレスポンスがあるまで待機
     return diag->next_method;
@@ -39,8 +40,8 @@ ManualClient::ManualClient(QWidget* parent):
 {
     Name = "ManualClient";
     IP   = "ローカル";
-    diag = new ManualClientDialog();
-    connect(diag,SIGNAL(CloseWindow()),this,SLOT(closeEvent()));
+    diag = QSharedPointer<ManualClientDialog>::create();
+    connect(diag.data(), SIGNAL(CloseWindow()), this, SLOT(closeEvent()));
 }
 
 ManualClient::~ManualClient()

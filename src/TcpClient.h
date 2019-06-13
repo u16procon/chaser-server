@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QDataStream>
+#include <QSharedPointer>
 #include "BaseClient.h"
 
 class TCPClient : public BaseClient
@@ -17,8 +18,8 @@ private:
 
     const QString NEWLINE_CODE = "";
 
-    QTcpServer*  server;        //TCPサーバー
-    QTcpSocket*  client;        //TCPクライアント
+    QSharedPointer<QTcpServer>  server;        //TCPサーバー
+    QSharedPointer<QTcpSocket>  client;        //TCPクライアント
 public:
     QString VisibilityString(QString str);//可視化
     QString WaitResponce();//通信待機
