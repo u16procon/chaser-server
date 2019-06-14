@@ -6,6 +6,7 @@
 #include <QDesktopServices>
 #include <QHostInfo>
 #include <QSharedPointer>
+#include <QDir>
 
 StartupDialog::StartupDialog(QWidget *parent) :
     QDialog(parent),
@@ -14,6 +15,8 @@ StartupDialog::StartupDialog(QWidget *parent) :
 {
     //UI初期化
     ui->setupUi(this);
+    setMusicFileList();
+    setImageFolderList();
     music_text = ui->GameMusicCombo->currentText();
     ui->CoolGroupBox->SetPortSpin(2009);
     ui->HotGroupBox ->SetPortSpin(2010);
@@ -77,6 +80,29 @@ bool StartupDialog::MapRead(const QString& dir){
     map.size.setY(map.field.size());
     return true;
 }
+
+void StartupDialog::setMusicFileList()
+{
+    QDir dir("./Music");
+
+    if(dir.exists()){
+        QStringList filelist = dir.entryList({"*.mp3", "*.wav"}, QDir::Files|QDir::NoSymLinks);
+        //qDebug()<<filelist;
+        ui->GameMusicCombo->clear();
+        ui->GameMusicCombo->addItems(filelist);
+    }
+}
+
+void StartupDialog::setImageFolderList()
+{
+    QDir dir("./Image");
+
+    if(dir.exists()){
+        QStringList filelist = dir.entryList(QDir::Dirs|QDir::NoSymLinks|QDir::NoDotAndDotDot);
+        //qDebug()<<filelist;
+    }
+}
+
 void StartupDialog::PushedMapSelect(){
     QString folder = QDir::currentPath();
     QString cap    = tr("マップを開く");
