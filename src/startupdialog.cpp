@@ -16,7 +16,7 @@ StartupDialog::StartupDialog(QWidget *parent) :
     //UI初期化
     ui->setupUi(this);
     setMusicFileList();
-    setImageFolderList();
+    setImageThemaList();
     music_text = ui->GameMusicCombo->currentText();
     ui->CoolGroupBox->SetPortSpin(2009);
     ui->HotGroupBox ->SetPortSpin(2010);
@@ -85,7 +85,7 @@ void StartupDialog::setMusicFileList()
 {
     QDir dir("./Music");
 
-    if(dir.exists()){
+    if(dir.exists()){ //ディレクトリが存在していたらmp3とwavのファイルをリストに追加する
         QStringList filelist = dir.entryList({"*.mp3", "*.wav"}, QDir::Files|QDir::NoSymLinks);
         //qDebug()<<filelist;
         ui->GameMusicCombo->clear();
@@ -93,13 +93,18 @@ void StartupDialog::setMusicFileList()
     }
 }
 
-void StartupDialog::setImageFolderList()
+void StartupDialog::setImageThemaList()
 {
+    ui->TextureThemeCombo->clear();
+    ui->TextureThemeCombo->addItems({"Light", "Heavy", "Jewel"}); //デフォルトの3テーマの追加
+
     QDir dir("./Image");
 
-    if(dir.exists()){
+    if(dir.exists()){ //ディレクトリが存在していたら
         QStringList filelist = dir.entryList(QDir::Dirs|QDir::NoSymLinks|QDir::NoDotAndDotDot);
         //qDebug()<<filelist;
+
+        ui->TextureThemeCombo->addItems(filelist);
     }
 }
 
@@ -129,9 +134,9 @@ void StartupDialog::SetMapStandby (bool state){
 }
 
 void StartupDialog::ChangedTexture(QString text){
-    if(text == "あっさり")this->map.texture = GameSystem::Texture::Light;
-    if(text == "こってり")this->map.texture = GameSystem::Texture::Heavy;
-    if(text == "ほうせき")this->map.texture = GameSystem::Texture::Jewel;
+    if(text == "Light")this->map.texture = GameSystem::Texture::Light;
+    if(text == "Heavy")this->map.texture = GameSystem::Texture::Heavy;
+    if(text == "Jewel")this->map.texture = GameSystem::Texture::Jewel;
 }
 
 void StartupDialog::Setting(){
