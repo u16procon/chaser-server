@@ -80,7 +80,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="TextureThemeCombo">
             <property name="whatsThis">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ゲームのテクスチャを設定します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -342,7 +342,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox</sender>
+   <sender>TextureThemeCombo</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>StartupDialog</receiver>
    <slot>ChangedTexture(QString)</slot>

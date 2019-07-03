@@ -60,7 +60,7 @@ RESOURCES += \
     resource.qrc
 
 win32:{
-    ICON += icon.ico
+    RC_FILE += icon.rc
 }
 mac:{
     ICON += icon.icns

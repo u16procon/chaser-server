@@ -74,9 +74,10 @@ public:
 
     //テクスチャ
     enum class Texture{
-        Light = 0, //あっさり
-        Heavy = 1, //こってり
-        Jewel = 2, //ほうせき
+        Light = 0, //Light
+        Heavy = 1, //Heavy
+        Jewel = 2, //Jewel
+        Other = 3  //ディレクトリから読み込み
     };
 
     //マップ上に描画する非物体
@@ -96,7 +97,7 @@ public:
         QString name;                   //ステージ名
         QPoint size;                    //マップサイズ
         QPoint team_first_point[TEAM_COUNT];//チーム初期位置
-        GameSystem::Texture texture;    //テクスチャ
+        QString texture_dir_path;    //テクスチャ
 
         Map();
 

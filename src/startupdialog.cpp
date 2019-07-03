@@ -6,6 +6,7 @@
 #include <QDesktopServices>
 #include <QHostInfo>
 #include <QSharedPointer>
+#include <QDir>
 
 StartupDialog::StartupDialog(QWidget *parent) :
     QDialog(parent),
@@ -14,6 +15,8 @@ StartupDialog::StartupDialog(QWidget *parent) :
 {
     //UI初期化
     ui->setupUi(this);
+    setMusicFileList();
+    setImageThemaList();
     music_text = ui->GameMusicCombo->currentText();
     ui->CoolGroupBox->SetPortSpin(2009);
     ui->HotGroupBox ->SetPortSpin(2010);
@@ -77,6 +80,34 @@ bool StartupDialog::MapRead(const QString& dir){
     map.size.setY(map.field.size());
     return true;
 }
+
+void StartupDialog::setMusicFileList()
+{
+    QDir dir("./Music");
+
+    if(dir.exists()){ //ディレクトリが存在していたらmp3とwavのファイルをリストに追加する
+        QStringList filelist = dir.entryList({"*.mp3", "*.wav"}, QDir::Files|QDir::NoSymLinks);
+        //qDebug()<<filelist;
+        ui->GameMusicCombo->clear();
+        ui->GameMusicCombo->addItems(filelist);
+    }
+}
+
+void StartupDialog::setImageThemaList()
+{
+    ui->TextureThemeCombo->clear();
+    ui->TextureThemeCombo->addItems({"Light", "Heavy", "Jewel"}); //デフォルトの3テーマの追加
+
+    QDir dir("./Image");
+
+    if(dir.exists()){ //ディレクトリが存在していたら
+        QStringList filelist = dir.entryList(QDir::Dirs|QDir::NoSymLinks|QDir::NoDotAndDotDot);
+        //qDebug()<<filelist;
+
+        ui->TextureThemeCombo->addItems(filelist);
+    }
+}
+
 void StartupDialog::PushedMapSelect(){
     QString folder = QDir::currentPath();
     QString cap    = tr("マップを開く");
@@ -103,9 +134,10 @@ void StartupDialog::SetMapStandby (bool state){
 }
 
 void StartupDialog::ChangedTexture(QString text){
-    if(text == "あっさり")this->map.texture = GameSystem::Texture::Light;
-    if(text == "こってり")this->map.texture = GameSystem::Texture::Heavy;
-    if(text == "ほうせき")this->map.texture = GameSystem::Texture::Jewel;
+    if(text == "Light")     this->map.texture_dir_path = ":/Image/Light";
+    else if(text == "Heavy")this->map.texture_dir_path = ":/Image/Heavy";
+    else if(text == "Jewel")this->map.texture_dir_path = ":/Image/Jewel";
+    else this->map.texture_dir_path = "Image/" + text;
 }
 
 void StartupDialog::Setting(){
