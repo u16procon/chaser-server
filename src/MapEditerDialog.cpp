@@ -22,10 +22,10 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     ui->listWidget->addItem(new QListWidgetItem("Block"));
     ui->listWidget->addItem(new QListWidgetItem("Item"));
     ui->listWidget->setIconSize(QSize(32,32));
-    ui->listWidget->item(0)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Floor.png"));
-    ui->listWidget->item(1)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Cool.png"));
-    ui->listWidget->item(2)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Block.png"));
-    ui->listWidget->item(3)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Item.png"));
+    ui->listWidget->item(0)->setIcon(QIcon(map.texture_dir_path + "/Floor.png"));
+    ui->listWidget->item(1)->setIcon(QIcon(map.texture_dir_path + "/Cool.png"));
+    ui->listWidget->item(2)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
+    ui->listWidget->item(3)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
 
     //ブロックの数をカウントして表示
     int counter = 0;
@@ -36,8 +36,8 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(counter))));
     //アイコン
     ui->ObjectCounter->setIconSize(QSize(32,32));
-    ui->ObjectCounter->item(0)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Block.png"));
-    ui->ObjectCounter->item(1)->setIcon(QIcon(GameBoard::GetTexturePath(map.texture) + "/Item.png"));
+    ui->ObjectCounter->item(0)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
+    ui->ObjectCounter->item(1)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
 
     connect(ui->listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(SelectItem(QListWidgetItem*,QListWidgetItem*)));
     connect(ui->TurnSpin  ,SIGNAL(valueChanged(int))                                    ,this,SLOT(SpinChanged(int)));
