@@ -22,13 +22,13 @@ void GameBoard::PickItem(GameSystem::Method method){
 
 }
 
-
+/*
 QString GameBoard::GetTexturePath(GameSystem::Texture tex){
     if(tex == GameSystem::Texture::Light)return ":/Image/Light";
     if(tex == GameSystem::Texture::Heavy)return ":/Image/Heavy";
     if(tex == GameSystem::Texture::Jewel)return ":/Image/Jewel";
 }
-
+*/
 void GameBoard::resizeEvent(QResizeEvent *event){
 
     //常に同じアスペクト比になるようにする
@@ -44,7 +44,7 @@ void GameBoard::resizeEvent(QResizeEvent *event){
     image_part.setWidth (static_cast<float>(event->size().width()) / field.size.x());
     image_part.setHeight(static_cast<float>(event->size().height()) / field.size.y());
 
-    ReloadTexture(texture);
+    ReloadTexture(texture_dir_path);
 }
 void GameBoard::paintEvent(QPaintEvent *event){
 
@@ -215,8 +215,8 @@ GameSystem::AroundData GameBoard::FieldAccessMethod(GameSystem::Method method){
 
 void GameBoard::setMap(const GameSystem::Map& map){
     field = map;
-    this->texture = map.texture;
-    ReloadTexture(texture);
+    this->texture_dir_path = map.texture_dir_path;
+    ReloadTexture(texture_dir_path);
 
     for(int i=0;i<TEAM_COUNT;i++){
         team_pos[i] = field.team_first_point[i];
@@ -243,7 +243,7 @@ GameBoard::GameBoard(QWidget *parent) :
 {
     image_part = QSize(32.0,32.0);
     //画像読み込み
-    ReloadTexture(GameSystem::Texture::Light);
+    ReloadTexture("Image/Light");
     ui->setupUi(this);
     for(int i = 0; i < TEAM_COUNT; i++){
         this->team_score[i] = 0;
@@ -257,23 +257,21 @@ GameBoard::~GameBoard()
 }
 
 
-void GameBoard::ReloadTexture(GameSystem::Texture tex){
-    this->texture = tex;
-
-    QString path = GetTexturePath(tex);
+void GameBoard::ReloadTexture(QString tex_dir_path){
+    this->texture_dir_path = tex_dir_path;
 
     //画像読み込み
-    this->team_resource   [static_cast<int>(GameSystem::TEAM::COOL)]            = QPixmap(path + "/Cool.png");
-    this->team_resource   [static_cast<int>(GameSystem::TEAM::HOT)]             = QPixmap(path + "/Hot.png");
-    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::NOTHING)]   = QPixmap(path + "/Floor.png");
+    this->team_resource   [static_cast<int>(GameSystem::TEAM::COOL)]            = QPixmap(tex_dir_path + "/Cool.png");
+    this->team_resource   [static_cast<int>(GameSystem::TEAM::HOT)]             = QPixmap(tex_dir_path + "/Hot.png");
+    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::NOTHING)]   = QPixmap(tex_dir_path + "/Floor.png");
     this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::TARGET)]    = QPixmap();
-    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::ITEM)]      = QPixmap(path + "/Item.png");
-    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::BLOCK)]     = QPixmap(path + "/Block.png");
+    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::ITEM)]      = QPixmap(tex_dir_path + "/Item.png");
+    this->field_resource  [static_cast<int>(GameSystem::MAP_OBJECT::BLOCK)]     = QPixmap(tex_dir_path + "/Block.png");
     this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::NOTHING)]  = QPixmap();
-    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::LOOK)]     = QPixmap(path + "/Look.png");
-    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::GETREADY)] = QPixmap(path + "/Getready.png");
-    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::SEARCH)]    = QPixmap(path + "/Search.png");
-    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::BLIND)]    = QPixmap(path + "/Blind.png");
+    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::LOOK)]     = QPixmap(tex_dir_path + "/Look.png");
+    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::GETREADY)] = QPixmap(tex_dir_path + "/Getready.png");
+    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::SEARCH)]    = QPixmap(tex_dir_path + "/Search.png");
+    this->overray_resource[static_cast<int>(GameSystem::MAP_OVERLAY::BLIND)]    = QPixmap(tex_dir_path + "/Blind.png");
 
     //変形
     for(QPixmap& img:team_resource )img = img.scaled(image_part.width(),image_part.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);

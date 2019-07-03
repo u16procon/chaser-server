@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!silent){
         bgm = QSharedPointer<QMediaPlayer>::create();
         connect(bgm.data(), SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text + ".wav"));
+        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
         bgm->setVolume(50);
         bgm->play();
     }

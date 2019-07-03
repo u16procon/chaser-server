@@ -33,6 +33,8 @@ public:
 
 public:
     bool MapRead(const QString& dir);
+    void setMusicFileList();
+    void setImageThemaList();
 
     explicit StartupDialog(QWidget *parent = 0);
     ~StartupDialog();
