@@ -134,9 +134,10 @@ void StartupDialog::SetMapStandby (bool state){
 }
 
 void StartupDialog::ChangedTexture(QString text){
-    if(text == "Light")this->map.texture = GameSystem::Texture::Light;
-    if(text == "Heavy")this->map.texture = GameSystem::Texture::Heavy;
-    if(text == "Jewel")this->map.texture = GameSystem::Texture::Jewel;
+    if(text == "Light")     this->map.texture_dir_path = ":/Image/Light";
+    else if(text == "Heavy")this->map.texture_dir_path = ":/Image/Heavy";
+    else if(text == "Jewel")this->map.texture_dir_path = ":/Image/Jewel";
+    else this->map.texture_dir_path = "Image/" + text;
 }
 
 void StartupDialog::Setting(){

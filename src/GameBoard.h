@@ -25,7 +25,7 @@ private:
     bool animation    = false; //アニメーション有効
     bool animationing = false; //アニメーション中
 
-    GameSystem::Texture texture; //使用テクスチャタイプ
+    QString texture_dir_path; //使用テクスチャディレクトリ
     QPixmap team_resource[TEAM_COUNT];   //チーム画像
     QPixmap field_resource[4];  //フィールド画像
     QPixmap overray_resource[5];//オーバーレイ画像
@@ -47,7 +47,7 @@ protected:
 
 public:
     //テクスチャパス取得
-    static QString GetTexturePath(GameSystem::Texture tex);
+    //static QString GetTexturePath(GameSystem::Texture tex);
 
     //オブジェクトの数を数える
     int GetMapObjectCount(GameSystem::MAP_OBJECT mb);
@@ -89,7 +89,7 @@ private:
 
 public slots:
     //テクスチャ読み込み
-    void ReloadTexture(GameSystem::Texture tex);
+    void ReloadTexture(QString texture_dir_path);
 
 };
 
