@@ -41,8 +41,10 @@ void GameBoard::resizeEvent(QResizeEvent *event){
     resize(event->size().height(),event->size().height());
     this->setMinimumSize(event->size().height(),event->size().height());
     */
-    image_part.setWidth (static_cast<float>(event->size().width()) / field.size.x());
-    image_part.setHeight(static_cast<float>(event->size().height()) / field.size.y());
+    image_part.setWidth (event->size().width() / field.size.x());
+    image_part.setHeight(event->size().height() / field.size.y());
+    event->ignore();
+    resize(image_part.width() * field.size.x(), image_part.height() * field.size.y());
 
     ReloadTexture(texture_dir_path);
 }
