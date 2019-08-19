@@ -265,6 +265,7 @@ void MainWindow::StepGame(){
             //refresh
             if(player ==  TEAM_COUNT-1){
                 ui->TimeBar->setValue(this->ui->TimeBar->value() - 1);
+                ui->TimeBar->repaint();
                 this->ui->TurnLabel->setText("Turn : " + QString::number(ui->TimeBar->value()));
 
                 //ボット戦モードならば表記のリアルタイム更新
