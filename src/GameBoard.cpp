@@ -243,7 +243,7 @@ GameBoard::GameBoard(QWidget *parent) :
 {
     image_part = QSize(32.0,32.0);
     //画像読み込み
-    ReloadTexture("Image/Light");
+    ReloadTexture(":/Image/Light");
     ui->setupUi(this);
     for(int i = 0; i < TEAM_COUNT; i++){
         this->team_score[i] = 0;
