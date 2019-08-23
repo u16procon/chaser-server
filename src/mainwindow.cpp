@@ -198,7 +198,7 @@ void MainWindow::StepGame(){
         // GetReady
         if(!startup->team_client[player]->client->WaitGetReady()){
             log << getTime() + "[停止]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "が正常にGetReadyを返しませんでした!" << "\r\n";
-            startup->team_client[player]->client->disconnected_flag = true;
+            startup->team_client[player]->client->is_disconnected = true;
         }else{
             //log << getTime() + "GetReady" + "\r\n";
             GameSystem::AroundData buffer = ui->Field->FieldAccessAround(GameSystem::Method{static_cast<GameSystem::TEAM>(player),
@@ -211,7 +211,7 @@ void MainWindow::StepGame(){
 
             if(team_mehod[player].action == GameSystem::Method::ACTION::GETREADY){
                 log << getTime() + "[停止]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "が二度GetReadyを行いました!" << "\r\n";
-                startup->team_client[player]->client->disconnected_flag = true;
+                startup->team_client[player]->client->is_disconnected = true;
             }
             team_mehod[player].team = static_cast<GameSystem::TEAM>(player);
         }
@@ -248,11 +248,11 @@ void MainWindow::StepGame(){
             //不正行動をはじく
             if(team_mehod[player].action == GameSystem::Method::ACTION::UNKNOWN){
                 log << getTime() + "[停止]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "が不正なメソッドを呼んでいます！" << "\r\n";
-                startup->team_client[player]->client->disconnected_flag = true;
+                startup->team_client[player]->client->is_disconnected = true;
             }
             if(team_mehod[player].rote   == GameSystem::Method::ROTE::UNKNOWN){
                 log << getTime() + "[停止]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "の行動メソッドが不正な方向を示しています！" << "\r\n";
-                startup->team_client[player]->client->disconnected_flag = true;
+                startup->team_client[player]->client->is_disconnected = true;
             }
 
             //行動ログの出力
@@ -279,7 +279,7 @@ void MainWindow::StepGame(){
             }
         }else{
             log << getTime() + "[停止]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "が正常にGetReadyを返しませんでした!" << "\r\n";
-            startup->team_client[player]->client->disconnected_flag = true;
+            startup->team_client[player]->client->is_disconnected = true;
         }
         //End
 
@@ -331,7 +331,7 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     QString append_str = "";
     //disconnect
     for(int i=0;i<TEAM_COUNT;i++){
-        if(startup->team_client[i]->client->disconnected_flag){
+        if(startup->team_client[i]->client->is_disconnected){
             append_str.append("\r\n[" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + " 切断により]");
             log << getTime() + "[終了]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + "との通信が切断されています。" << "\r\n";
         }
@@ -422,7 +422,7 @@ GameSystem::WINNER MainWindow::Judge(){
         }
 
         //切断死
-        if(startup->team_client[i]->client->disconnected_flag){
+        if(startup->team_client[i]->client->is_disconnected){
             log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + "通信切断" << "\r\n";
             team_around.finish();
             team_lose[i]=true;
