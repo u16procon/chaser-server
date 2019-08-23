@@ -38,7 +38,7 @@ QString TCPClient::WaitResponce(){
             }
             //不正文字列：改行なし
             if(response.size() > 0 && *(response.end()-1) != '\n'){
-                disconnected_flag = true;
+                is_disconnected = true;
                 qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Noting \\n";
 
                 return QString();
@@ -48,18 +48,18 @@ QString TCPClient::WaitResponce(){
             return response;
         }else{
             //レスポンスなし
-            disconnected_flag = true;
+            is_disconnected = true;
             //qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Noting responce";
             return QString();
         }
     }
-    disconnected_flag=true;
+    is_disconnected=true;
     //qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Too many invald responce";
     return QString();
 }
 
 bool TCPClient::WaitGetReady(){
-    if(disconnected_flag)return false;
+    if(is_disconnected)return false;
     //ターン開始文字列
     if(client == nullptr)return false;
     client->write(QString("@\r\n").toUtf8());
@@ -71,7 +71,7 @@ bool TCPClient::WaitGetReady(){
     return (response == "gr\r\n");
 }
 GameSystem::Method TCPClient::WaitReturnMethod(GameSystem::AroundData data){
-    if(disconnected_flag)return GameSystem::Method();
+    if(is_disconnected)return GameSystem::Method();
     //周辺情報文字列
     if(client == nullptr)return GameSystem::Method{GameSystem::TEAM::UNKNOWN,
                 GameSystem::Method::ACTION::UNKNOWN,
@@ -87,7 +87,7 @@ GameSystem::Method TCPClient::WaitReturnMethod(GameSystem::AroundData data){
                                    GameSystem::Method::ROTE::UNKNOWN};
 }
 bool TCPClient::WaitEndSharp(GameSystem::AroundData data){
-    if(disconnected_flag)return false;
+    if(is_disconnected)return false;
 
     if(client == nullptr)return false;
     //周辺情報文字列
@@ -126,7 +126,7 @@ void TCPClient::DisConnect(){
     this->client = nullptr;
     this->IP   = "";
     this->Name = "";
-    disconnected_flag=true;
+    is_disconnected=true;
 }
 
 QString TCPClient::GetTeamName(){
