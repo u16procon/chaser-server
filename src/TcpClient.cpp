@@ -108,25 +108,26 @@ bool TCPClient::CloseSocket(){
     this->client = nullptr;
     this->server->close();
     this->server = QSharedPointer<QTcpServer>::create(this);
-    emit DisConnect();
+    emit DisConnected();
     return true;
 }
 bool TCPClient::isConnecting(){
     return this->server->isListening();
 }
-void TCPClient::NewConnect(){
+void TCPClient::NewConnection(){
     this->client.reset(this->server->nextPendingConnection());
     this->IP     = this->client->peerAddress().toString();
     connect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnect()));
+    connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
     emit Connected();
 }
-void TCPClient::DisConnect(){
-    emit Disconnected();
+
+void TCPClient::DisConnected(){
     this->client = nullptr;
     this->IP   = "";
     this->Name = "";
     is_disconnected=true;
+    emit Disconnected();
 }
 
 QString TCPClient::GetTeamName(){
@@ -172,7 +173,7 @@ TCPClient::TCPClient(QObject *parent) :
     //接続最大数を1に固定
     this->server->setMaxPendingConnections(1);
     //シグナルとスロットを接続
-    connect(this->server.data(), SIGNAL(newConnection()), this, SLOT(NewConnect()));
+    connect(this->server.data(), SIGNAL(newConnection()), this, SLOT(NewConnection()));
 }
 
 TCPClient::~TCPClient()
