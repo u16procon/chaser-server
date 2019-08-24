@@ -132,6 +132,8 @@ void TCPClient::DisConnected(){
     this->IP   = "";
     this->Name = "";
     is_disconnected=true;
+    disconnect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
+    disconnect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
     emit Disconnected();
 }
 
