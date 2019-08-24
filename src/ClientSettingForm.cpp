@@ -49,13 +49,13 @@ void ClientSettingForm::DisConnected(){
     //TCP待機やめ
     if(this->client.dynamicCast<TCPClient>()!=nullptr){
         this->client.dynamicCast<TCPClient>()->CloseSocket();
-        this->client = QSharedPointer<TCPClient>::create(this);
+        //this->client = QSharedPointer<TCPClient>::create(this);
     }
 
     //再connectしクライアントの接続を待つ
-    connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
-    connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
-    connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+    //connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
+    //connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
+    //connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
     this->client->Startup();
 
     this->ui->ConnectButton->setText("接続開始");
@@ -80,12 +80,12 @@ void ClientSettingForm::ConnectionToggled(bool state){
     }else{
         //TCP待機やめ
         this->client.dynamicCast<TCPClient>()->CloseSocket();
-        this->client = QSharedPointer<TCPClient>::create(this);
+        //this->client = QSharedPointer<TCPClient>::create(this);
 
         //再connectしクライアントの接続を待つ
-        connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
-        connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
-        connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+        //connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
+        //connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
+        //connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
         this->client->Startup();
 
         this->ui->ConnectButton->setText("接続開始");
