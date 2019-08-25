@@ -38,7 +38,7 @@ QString TCPClient::WaitResponce(){
             }
             //不正文字列：改行なし
             if(response.size() > 0 && *(response.end()-1) != '\n'){
-                disconnected_flag = true;
+                is_disconnected = true;
                 qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Noting \\n";
 
                 return QString();
@@ -48,18 +48,18 @@ QString TCPClient::WaitResponce(){
             return response;
         }else{
             //レスポンスなし
-            disconnected_flag = true;
+            is_disconnected = true;
             //qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Noting responce";
             return QString();
         }
     }
-    disconnected_flag=true;
+    is_disconnected=true;
     //qDebug() << QString("[Port") + QString::number(this->client->localPort()) +"]:Too many invald responce";
     return QString();
 }
 
 bool TCPClient::WaitGetReady(){
-    if(disconnected_flag)return false;
+    if(is_disconnected)return false;
     //ターン開始文字列
     if(client == nullptr)return false;
     client->write(QString("@\r\n").toUtf8());
@@ -71,7 +71,7 @@ bool TCPClient::WaitGetReady(){
     return (response == "gr\r\n");
 }
 GameSystem::Method TCPClient::WaitReturnMethod(GameSystem::AroundData data){
-    if(disconnected_flag)return GameSystem::Method();
+    if(is_disconnected)return GameSystem::Method();
     //周辺情報文字列
     if(client == nullptr)return GameSystem::Method{GameSystem::TEAM::UNKNOWN,
                 GameSystem::Method::ACTION::UNKNOWN,
@@ -87,7 +87,7 @@ GameSystem::Method TCPClient::WaitReturnMethod(GameSystem::AroundData data){
                                    GameSystem::Method::ROTE::UNKNOWN};
 }
 bool TCPClient::WaitEndSharp(GameSystem::AroundData data){
-    if(disconnected_flag)return false;
+    if(is_disconnected)return false;
 
     if(client == nullptr)return false;
     //周辺情報文字列
@@ -104,29 +104,41 @@ bool TCPClient::OpenSocket(int Port){
     return true;
 }
 bool TCPClient::CloseSocket(){
-    if(this->client != nullptr)this->client->disconnectFromHost();
-    this->client = nullptr;
-    this->server->close();
-    this->server = QSharedPointer<QTcpServer>::create(this);
-    emit DisConnect();
+    if(this->client->isOpen()){
+        this->client->close();
+    }
+    if(this->server->isListening()){
+        this->server->close();
+    }
+    //this->server = QSharedPointer<QTcpServer>::create(this);
+    //emit DisConnected();
     return true;
 }
 bool TCPClient::isConnecting(){
     return this->server->isListening();
 }
-void TCPClient::NewConnect(){
+void TCPClient::NewConnection(){
     this->client.reset(this->server->nextPendingConnection());
-    this->IP     = this->client->peerAddress().toString();
+    this->IP = this->client->peerAddress().toString();
     connect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnect()));
+    connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    is_disconnected = false;
     emit Connected();
 }
-void TCPClient::DisConnect(){
-    emit Disconnected();
-    this->client = nullptr;
+
+void TCPClient::DisConnected(){
+    if(this->client->isOpen()){
+        this->client->close();
+    }
+    if(this->server->isListening()){
+        this->server->close();
+    }
     this->IP   = "";
     this->Name = "";
-    disconnected_flag=true;
+    is_disconnected=true;
+    disconnect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
+    disconnect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    emit Disconnected();
 }
 
 QString TCPClient::GetTeamName(){
@@ -168,11 +180,11 @@ TCPClient::TCPClient(QObject *parent) :
     }
 
     this->server = QSharedPointer<QTcpServer>::create(this);
-    this->client = nullptr;
+    this->client.reset();
     //接続最大数を1に固定
     this->server->setMaxPendingConnections(1);
     //シグナルとスロットを接続
-    connect(this->server.data(), SIGNAL(newConnection()), this, SLOT(NewConnect()));
+    connect(this->server.data(), SIGNAL(newConnection()), this, SLOT(NewConnection()));
 }
 
 TCPClient::~TCPClient()

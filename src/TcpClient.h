@@ -42,8 +42,8 @@ public:
 signals:
 
 private slots:
-    void NewConnect (); //新規接続
-    void DisConnect (); //切断
+    void NewConnection (); //新規接続
+    void DisConnected (); //切断
 
 public slots:
     QString GetTeamName();//チーム名取得

@@ -4,7 +4,7 @@
 
 void ManualClient::closeEvent(){
     emit Disconnected();
-    disconnected_flag=true;
+    is_disconnected=true;
 }
 
 bool ManualClient::WaitGetReady(){
