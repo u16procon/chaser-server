@@ -190,7 +190,8 @@ void MainWindow::StepGame(){
     //ターンログ出力
     if(ui->TimeBar->value() != turn_count){
        turn_count = ui->TimeBar->value();
-       log << QString("-----残") + QString::number(ui->TimeBar->value()) + "ターン-----" + "\r\n";
+       log << QString("-----残") + QString::number(turn_count) + "ターン-----" + "\r\n";
+       qDebug() << QString("-----残") + QString::number(turn_count) + "ターン-----";
     }
 
     //GetReadyの取得
@@ -430,7 +431,7 @@ GameSystem::WINNER MainWindow::Judge(){
     }
 
     //相打ち、または時間切れ時はアイテム判定とする
-    if(!qFind(team_lose,team_lose+TEAM_COUNT,false) || ui->TimeBar->value()==0){
+    if(!std::find(team_lose,team_lose+TEAM_COUNT,false) || ui->TimeBar->value()==0){
         log << getTime() + "[情報]相打ちまたは、タイムアップのためアイテム判定を行います" + "\r\n";
         log << getTime() + "[得点]";
         for(int i=0;i<TEAM_COUNT;i++){
