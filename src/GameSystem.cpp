@@ -45,7 +45,7 @@ GameSystem::Map::Map():
     turn(100),
     name("[DEFAULT MAP]"),
     size(DEFAULT_MAP_WIDTH,DEFAULT_MAP_HEIGHT),
-    texture_dir_path("Image/Jewel"){
+    texture_dir_path(":/Image/Jewel"){
 }
 void GameSystem::Map::SetSize(QPoint size){
     this->size = size;

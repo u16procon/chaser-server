@@ -45,12 +45,12 @@ void ClientSettingForm::DisConnected(){
     this->ui->ConnectButton->setText("接続開始");
 
     */
-    disconnect(this->client.data(), SIGNAL( Disconnected()), this, SLOT(DisConnected()));
+    //disconnect(this->client.data(), SIGNAL( Disconnected()), this, SLOT(DisConnected()));
     //TCP待機やめ
-    if(this->client.dynamicCast<TCPClient>()!=nullptr){
-        this->client.dynamicCast<TCPClient>()->CloseSocket();
+    //if(this->client.dynamicCast<TCPClient>()->isConnecting()){
+        //this->client.dynamicCast<TCPClient>()->CloseSocket();
         //this->client = QSharedPointer<TCPClient>::create(this);
-    }
+    //}
 
     //再connectしクライアントの接続を待つ
     //connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
@@ -65,7 +65,9 @@ void ClientSettingForm::DisConnected(){
     this->ui->PortSpinBox->setEnabled(true);
 
     //状態解除
-    if(this->ui->ConnectButton->isChecked())this->ui->ConnectButton->toggle();
+    if(this->ui->ConnectButton->isChecked()){
+        this->ui->ConnectButton->toggle();
+    }
 
     emit Standby(this,false);
 }
