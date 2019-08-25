@@ -7,7 +7,7 @@ void BaseClient::Startup(){
 BaseClient::BaseClient(QObject *parent) :
     QObject(parent),
     Name(""),
-    disconnected_flag(false)
+    is_disconnected(false)
 {
 
 }
