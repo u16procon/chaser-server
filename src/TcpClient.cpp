@@ -105,7 +105,7 @@ bool TCPClient::OpenSocket(int Port){
 }
 bool TCPClient::CloseSocket(){
     if(this->client->isOpen()){
-        this->client->disconnectFromHost();
+        this->client->close();
     }
     if(this->server->isListening()){
         this->server->close();
@@ -122,12 +122,16 @@ void TCPClient::NewConnection(){
     this->IP = this->client->peerAddress().toString();
     connect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
     connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    is_disconnected = false;
     emit Connected();
 }
 
 void TCPClient::DisConnected(){
     if(this->client->isOpen()){
         this->client->close();
+    }
+    if(this->server->isListening()){
+        this->server->close();
     }
     this->IP   = "";
     this->Name = "";
