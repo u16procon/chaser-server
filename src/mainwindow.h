@@ -12,7 +12,6 @@
 #include <QDataStream>
 #include <QMediaPlayer>
 #include <QThread>
-#include <QSharedPointer>
 #include "StableLog.h"
 
 namespace Ui {
@@ -27,19 +26,19 @@ private:
     int player;      //次ターン行動プレイヤー
 
     int FRAME_RATE = 150;   //ゲームフレームレート
-    QSharedPointer<QTimer> clock;          //ゲームクロック
-    QSharedPointer<QTimer> startup_anime;  //開始アニメーション
-    QSharedPointer<QTimer> teamshow_anime; //チーム表示アニメーション
-    QSharedPointer<QTimer> blind_anime;    //まっくらアニメーション
-    QSharedPointer<StartupDialog> startup; //スタートアップダイアログ
-    //QSharedPointer<QSound> music;          //音楽
+    QTimer* clock;          //ゲームクロック
+    QTimer* startup_anime;  //開始アニメーション
+    QTimer* teamshow_anime; //チーム表示アニメーション
+    QTimer* blind_anime;    //まっくらアニメーション
+    StartupDialog* startup; //スタートアップダイアログ
+    QSound* music;          //音楽
 
     bool silent;
 
     bool dark;              //暗転処理
     bool isbotbattle;       //ボット戦モード
 
-    //QFile* file;    //ログファイル
+    QFile* file;    //ログファイル
     StableLog log;//ログストリーム
     int anime_map_time  = 6000;//マップ構築アニメーション時間
     int anime_team_time = 2000;//チーム配置アニメーション時間
@@ -56,10 +55,10 @@ private:
     Ui::MainWindow *ui;
 
     //音楽
-    QSharedPointer<QMediaPlayer> bgm;
+    QMediaPlayer *bgm;
 
 private slots:
-    //void SaveFile();
+    void SaveFile();
 
     //ゲーム進行
     void StepGame();

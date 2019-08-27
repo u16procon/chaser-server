@@ -5,7 +5,6 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QSharedPointer>
 #include "TcpClient.h"
 #include "ComClient.h"
 #include "ManualClient.h"
@@ -29,7 +28,7 @@ public:
     QString music_text;
     GameSystem::Map map;
 
-    QSharedPointer<ClientSettingForm> team_client[TEAM_COUNT];
+    ClientSettingForm* team_client[TEAM_COUNT];
 
 public:
     bool MapRead(const QString& dir);
