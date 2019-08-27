@@ -5,7 +5,6 @@
 #include <QNetworkInterface>
 #include <QDesktopServices>
 #include <QHostInfo>
-#include <QSharedPointer>
 #include <QDir>
 
 StartupDialog::StartupDialog(QWidget *parent) :
@@ -141,8 +140,8 @@ void StartupDialog::ChangedTexture(QString text){
 }
 
 void StartupDialog::Setting(){
-    QSharedPointer<SettingDialog> diag;
-    diag = QSharedPointer<SettingDialog>::create();
+    SettingDialog* diag;
+    diag = new SettingDialog;
     if(diag->exec() == QDialog::Accepted){
         //設定を保存
         diag->Export();
@@ -150,8 +149,8 @@ void StartupDialog::Setting(){
 }
 
 void StartupDialog::ShowDesignDialog(){
-    QSharedPointer<DesignDialog> diag;
-    diag = QSharedPointer<DesignDialog>::create();
+    DesignDialog* diag;
+    diag = new DesignDialog;
     if(diag->exec() == QDialog::Accepted){
         //設定を保存
         diag->Export();
