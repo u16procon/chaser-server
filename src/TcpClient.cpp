@@ -114,7 +114,7 @@ bool TCPClient::CloseSocket(){
 bool TCPClient::isConnecting(){
     return this->server->isListening();
 }
-void TCPClient::NewConnect(){
+void TCPClient::NewConnection(){
     this->client = this->server->nextPendingConnection();
     this->IP     = this->client->peerAddress().toString();
     connect(this->client,SIGNAL(readyRead()),this,SLOT(GetTeamName()));
@@ -133,8 +133,8 @@ void TCPClient::DisConnected(){
     this->IP   = "";
     this->Name = "";
     is_disconnected=true;
-    disconnect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    disconnect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    disconnect(this->client, SIGNAL(readyRead()), this, SLOT(GetTeamName()));
+    disconnect(this->client, SIGNAL(disconnected()), this, SLOT(DisConnected()));
     emit Disconnected();
 }
 
