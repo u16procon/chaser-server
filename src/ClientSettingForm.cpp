@@ -1,16 +1,15 @@
 #include "ClientSettingForm.h"
 #include "ui_ClientSettingForm.h"
-#include <QSharedPointer>
 
 ClientSettingForm::ClientSettingForm(QWidget *parent) :
     QGroupBox(parent),
     ui(new Ui::ClientSettingForm)
 {
     ui->setupUi(this);
-    this->client = QSharedPointer<TCPClient>::create();
-    connect(this->client.data() ,SIGNAL(Connected())   , this, SLOT(Connected()));
-    connect(this->client.data() ,SIGNAL(Ready())       , this, SLOT(SetStandby()));
-    connect(this->client.data() ,SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+    this->client = new TCPClient();
+    connect(this->client ,SIGNAL(Connected())   ,this,SLOT(Connected()));
+    connect(this->client ,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
+    connect(this->client ,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
 
 }
 
@@ -45,17 +44,19 @@ void ClientSettingForm::DisConnected(){
     this->ui->ConnectButton->setText("接続開始");
 
     */
-    //disconnect(this->client.data(), SIGNAL( Disconnected()), this, SLOT(DisConnected()));
+   /*
+    disconnect(this->client,SIGNAL( Disconnected()),this,SLOT(DisConnected()));
     //TCP待機やめ
-    //if(this->client.dynamicCast<TCPClient>()->isConnecting()){
-        //this->client.dynamicCast<TCPClient>()->CloseSocket();
-        //this->client = QSharedPointer<TCPClient>::create(this);
-    //}
+    if(dynamic_cast<TCPClient*>(this->client)!=nullptr){
+        dynamic_cast<TCPClient*>(this->client)->CloseSocket();
+        this->client = new TCPClient(this);
+    }
 
     //再connectしクライアントの接続を待つ
-    //connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
-    //connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
-    //connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+    connect(this->client,SIGNAL(Connected())   ,this,SLOT(Connected()));
+    connect(this->client,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
+    connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
+    */
     this->client->Startup();
 
     this->ui->ConnectButton->setText("接続開始");
@@ -75,19 +76,21 @@ void ClientSettingForm::DisConnected(){
 void ClientSettingForm::ConnectionToggled(bool state){
     if(state){
         //TCP待機開始
-        this->client.dynamicCast<TCPClient>()->OpenSocket(ui->PortSpinBox->value());
+        dynamic_cast<TCPClient*>(this->client)->OpenSocket(ui->PortSpinBox->value());
         this->ui->ConnectButton->setText("待機終了");
         this->ui->StateLabel->setText("TCP接続待ち状態");
         this->ui->PortSpinBox->setEnabled(false);
     }else{
         //TCP待機やめ
-        this->client.dynamicCast<TCPClient>()->CloseSocket();
-        //this->client = QSharedPointer<TCPClient>::create(this);
+        dynamic_cast<TCPClient*>(this->client)->CloseSocket();
+        /*
+        this->client = new TCPClient(this);
 
         //再connectしクライアントの接続を待つ
-        //connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
-        //connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
-        //connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+        connect(this->client,SIGNAL(Connected())   ,this,SLOT(Connected()));
+        connect(this->client,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
+        connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
+        */
         this->client->Startup();
 
         this->ui->ConnectButton->setText("接続開始");
@@ -101,8 +104,9 @@ void ClientSettingForm::ConnectionToggled(bool state){
 
 void ClientSettingForm::ComboBoxChenged(QString text){
     //接続初期化
+    delete client;
     if(text=="TCPユーザー"){
-        this->client = QSharedPointer<TCPClient>::create(this);
+        this->client = new TCPClient(this);
         this->ui->StateLabel->setText("非接続");
         this->ui->NameLabel->setText("不明");
         this->ui->ConnectButton->setText("接続開始");
@@ -111,15 +115,15 @@ void ClientSettingForm::ComboBoxChenged(QString text){
     }else {
         this->ui->PortSpinBox->setEnabled(false);
         this->ui->ConnectButton->setEnabled(false);
-        if(text=="自動くん")this->client = QSharedPointer<ComClient>::create(this);
-        if(text=="ManualClient")this->client = QSharedPointer<ManualClient>::create(this);
+        if(text=="自動くん")this->client = new ComClient(this);
+        if(text=="ManualClient")this->client = new ManualClient(this);
     }
 
     emit Standby(this,false);
     //再connectしクライアントの接続を待つ
-    connect(this->client.data(), SIGNAL(Connected())   , this, SLOT(Connected()));
-    connect(this->client.data(), SIGNAL(Ready())       , this, SLOT(SetStandby()));
-    connect(this->client.data(), SIGNAL(Disconnected()), this, SLOT(DisConnected()));
+    connect(this->client,SIGNAL(Connected())   ,this,SLOT(Connected()));
+    connect(this->client,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
+    connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
     this->client->Startup();
 }
 void ClientSettingForm::SetPortSpin(int num){

@@ -1,6 +1,5 @@
 #include "TcpClient.h"
 #include <QSettings>
-#include <QSharedPointer>
 
 QString TCPClient::VisibilityString(QString str){
     QString answer;
@@ -110,18 +109,16 @@ bool TCPClient::CloseSocket(){
     if(this->server->isListening()){
         this->server->close();
     }
-    //this->server = QSharedPointer<QTcpServer>::create(this);
-    //emit DisConnected();
     return true;
 }
 bool TCPClient::isConnecting(){
     return this->server->isListening();
 }
-void TCPClient::NewConnection(){
-    this->client.reset(this->server->nextPendingConnection());
-    this->IP = this->client->peerAddress().toString();
-    connect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    connect(this->client.data(), SIGNAL(disconnected()), this, SLOT(DisConnected()));
+void TCPClient::NewConnect(){
+    this->client = this->server->nextPendingConnection();
+    this->IP     = this->client->peerAddress().toString();
+    connect(this->client,SIGNAL(readyRead()),this,SLOT(GetTeamName()));
+    connect(this->client,SIGNAL(disconnected()),this,SLOT(DisConnect()));
     is_disconnected = false;
     emit Connected();
 }
@@ -159,7 +156,7 @@ QString TCPClient::GetTeamName(){
 
         this->Name = namebuf;
 
-        disconnect(this->client.data(), SIGNAL(readyRead()), this, SLOT(GetTeamName()));
+        disconnect(this->client,SIGNAL(readyRead()),this,SLOT(GetTeamName()));
         emit WriteTeamName();
         emit Ready();
         return this->Name;
@@ -171,20 +168,20 @@ QString TCPClient::GetTeamName(){
 TCPClient::TCPClient(QObject *parent) :
     BaseClient(parent)
 {
-    QSharedPointer<QSettings> mSettings;
-    mSettings = QSharedPointer<QSettings>::create( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    QSettings* mSettings;
+    mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     QVariant v = mSettings->value( "Timeout" );
     if (v.type() != QVariant::Invalid){
         TIMEOUT = v.toInt();
     }
 
-    this->server = QSharedPointer<QTcpServer>::create(this);
-    this->client.reset();
+    this->server = new QTcpServer(this);
+    this->client = nullptr;
     //接続最大数を1に固定
     this->server->setMaxPendingConnections(1);
     //シグナルとスロットを接続
-    connect(this->server.data(), SIGNAL(newConnection()), this, SLOT(NewConnection()));
+    connect(this->server,SIGNAL(newConnection()),this,SLOT(NewConnect()));
 }
 
 TCPClient::~TCPClient()
