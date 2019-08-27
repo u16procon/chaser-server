@@ -103,7 +103,7 @@ bool TCPClient::OpenSocket(int Port){
     return true;
 }
 bool TCPClient::CloseSocket(){
-    if(this->client->isOpen()){
+    if(this->client != nullptr && this->client->isOpen()){
         this->client->close();
     }
     if(this->server->isListening()){
@@ -115,10 +115,11 @@ bool TCPClient::isConnecting(){
     return this->server->isListening();
 }
 void TCPClient::NewConnection(){
+    delete this->client;
     this->client = this->server->nextPendingConnection();
     this->IP     = this->client->peerAddress().toString();
     connect(this->client,SIGNAL(readyRead()),this,SLOT(GetTeamName()));
-    connect(this->client,SIGNAL(disconnected()),this,SLOT(DisConnect()));
+    connect(this->client,SIGNAL(disconnected()),this,SLOT(DisConnected()));
     is_disconnected = false;
     emit Connected();
 }
@@ -175,13 +176,14 @@ TCPClient::TCPClient(QObject *parent) :
     if (v.type() != QVariant::Invalid){
         TIMEOUT = v.toInt();
     }
+    delete mSettings;
 
     this->server = new QTcpServer(this);
     this->client = nullptr;
     //接続最大数を1に固定
     this->server->setMaxPendingConnections(1);
     //シグナルとスロットを接続
-    connect(this->server,SIGNAL(newConnection()),this,SLOT(NewConnect()));
+    connect(this->server,SIGNAL(newConnection()),this,SLOT(NewConnection()));
 }
 
 TCPClient::~TCPClient()
@@ -189,5 +191,8 @@ TCPClient::~TCPClient()
     if(isConnecting()){
         CloseSocket();
     }
+
+    delete this->client;
+    delete this->server;
 }
 
