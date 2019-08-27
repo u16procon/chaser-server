@@ -146,6 +146,7 @@ void StartupDialog::Setting(){
         //設定を保存
         diag->Export();
     }
+    delete diag;
 }
 
 void StartupDialog::ShowDesignDialog(){
@@ -155,5 +156,6 @@ void StartupDialog::ShowDesignDialog(){
         //設定を保存
         diag->Export();
     }
+    delete diag;
 }
 
