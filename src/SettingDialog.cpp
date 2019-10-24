@@ -2,14 +2,13 @@
 #include "ui_SettingDialog.h"
 #include <QSettings>
 #include <QFileDialog>
-#include <QSharedPointer>
 
 SettingDialog::SettingDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingDialog)
 {
-    QSharedPointer<QSettings> mSettings;
-    mSettings = QSharedPointer<QSettings>::create( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    QSettings* mSettings;
+    mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     ui->setupUi(this);
 
@@ -42,8 +41,8 @@ SettingDialog::SettingDialog(QWidget *parent) :
 
 void SettingDialog::Export(){
 
-    QSharedPointer<QSettings> mSettings;
-    mSettings = QSharedPointer<QSettings>::create( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
+    QSettings* mSettings;
+    mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     mSettings->setValue( "LogFilepath", ui->Log->text() );

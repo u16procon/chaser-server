@@ -5,7 +5,6 @@
 #include <QNetworkInterface>
 #include <QDesktopServices>
 #include <QHostInfo>
-#include <QSharedPointer>
 #include <QDir>
 
 StartupDialog::StartupDialog(QWidget *parent) :
@@ -22,8 +21,8 @@ StartupDialog::StartupDialog(QWidget *parent) :
     ui->HotGroupBox ->SetPortSpin(2010);
 
     //クライアント初期化
-    this->team_client[static_cast<int>(GameSystem::TEAM::COOL)].reset(ui->CoolGroupBox);
-    this->team_client[static_cast<int>(GameSystem::TEAM::HOT )].reset(ui->HotGroupBox) ;
+    this->team_client[static_cast<int>(GameSystem::TEAM::COOL)] = ui->CoolGroupBox;
+    this->team_client[static_cast<int>(GameSystem::TEAM::HOT )] = ui->HotGroupBox ;
     for(int i=0;i<TEAM_COUNT;i++){
         team_standby[i] = false;
     }
@@ -118,9 +117,9 @@ void StartupDialog::PushedMapSelect(){
     SetMapStandby(MapRead(filePath));
 }
 
-void StartupDialog::ClientStandby(ClientSettingForm* client, bool complate){
+void StartupDialog::ClientStandby(ClientSettingForm* client,bool complate){
     for(int i=0;i<TEAM_COUNT;i++){
-        if(team_client[i].data() == client){
+        if(team_client[i] == client){
             team_standby[i] = complate;
             CheckStandby();
             return;
@@ -141,20 +140,22 @@ void StartupDialog::ChangedTexture(QString text){
 }
 
 void StartupDialog::Setting(){
-    QSharedPointer<SettingDialog> diag;
-    diag = QSharedPointer<SettingDialog>::create();
+    SettingDialog* diag;
+    diag = new SettingDialog;
     if(diag->exec() == QDialog::Accepted){
         //設定を保存
         diag->Export();
     }
+    delete diag;
 }
 
 void StartupDialog::ShowDesignDialog(){
-    QSharedPointer<DesignDialog> diag;
-    diag = QSharedPointer<DesignDialog>::create();
+    DesignDialog* diag;
+    diag = new DesignDialog;
     if(diag->exec() == QDialog::Accepted){
         //設定を保存
         diag->Export();
     }
+    delete diag;
 }
 

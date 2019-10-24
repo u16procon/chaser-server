@@ -1,17 +1,19 @@
 #include "StableLog.h"
-#include <QSharedPointer>
 
 
 
 bool StableLog::Write(const QString& str) const{
     //追加書き込みオープン
-    QSharedPointer<QFile> file = QSharedPointer<QFile>::create(filename);
+    QFile* file = new QFile(filename);
     file->open(QIODevice::Append);
     QTextStream log;
-    log.setDevice(file.data());
+    log.setDevice(file);
 
     //書いて
     log << str;
+
+    //閉じる
+    delete file;
 }
 
 const StableLog& StableLog::operator<<(const QString& str)const{
@@ -26,14 +28,15 @@ StableLog::StableLog()
 
 StableLog::StableLog(QString filename) : filename(filename){
 
-    QSharedPointer<QFile> file = QSharedPointer<QFile>::create(filename);
+    QFile* file = new QFile(filename);
 
     QTextStream log;
     file->open(QIODevice::WriteOnly);
-    log.setDevice(file.data());
+    log.setDevice(file);
     //ログファイルオープン
-    log.setDevice(file.data());
+    log.setDevice(file);
     log << "--Stable Log--\r\n";
+    delete file;
 }
 
 StableLog::~StableLog()
