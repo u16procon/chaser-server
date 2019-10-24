@@ -2,7 +2,6 @@
 #define CLIENTSETTINGFORM_H
 
 #include <QGroupBox>
-#include <QSharedPointer>
 #include "TcpClient.h"
 #include "ComClient.h"
 #include "ManualClient.h"
@@ -17,7 +16,7 @@ class ClientSettingForm : public QGroupBox
     Q_OBJECT
 
 public:
-    QSharedPointer<BaseClient> client;
+    BaseClient* client;
 
     explicit ClientSettingForm(QWidget *parent = 0);
     ~ClientSettingForm();
