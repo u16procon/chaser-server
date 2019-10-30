@@ -112,7 +112,7 @@
               <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
              </property>
              <property name="text">
-              <string>TURN：100</string>
+              <string>残りターン数：100</string>
              </property>
             </widget>
            </item>
@@ -217,7 +217,11 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">QGroupBox {
+	color: rgb(0, 0, 255);
+	font-size: 16pt;
+	font-weight: bold;
+}</string>
         </property>
         <property name="title">
          <string>Cool</string>
@@ -297,10 +301,14 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">QGroupBox {
+	color: rgb(255, 0, 0);
+	font-size: 16pt;
+	font-weight: bold;
+}</string>
         </property>
         <property name="title">
-         <string>HOT</string>
+         <string>Hot</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="1" column="0">
@@ -372,6 +380,12 @@
           <width>400</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QGroupBox {
+	font-size: 16pt;
+	font-weight: bold;
+}</string>
         </property>
         <property name="title">
          <string>Server</string>
