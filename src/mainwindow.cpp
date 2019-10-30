@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
         this->ui->Field  ->setMap(this->startup->map);
         this->ui->TimeBar->setMaximum(this->startup->map.turn);
         this->ui->TimeBar->setValue  (this->startup->map.turn);
-        this->ui->TurnLabel     ->setText("Turn : " + QString::number(this->ui->TimeBar->value()));
+        this->ui->TurnLabel     ->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
         this->ui->CoolNameLabel ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ? "Cool" : this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
         this->ui->HotNameLabel  ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ? "Hot"  : this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
 
@@ -266,7 +266,7 @@ void MainWindow::StepGame(){
             if(player ==  TEAM_COUNT-1){
                 ui->TimeBar->setValue(this->ui->TimeBar->value() - 1);
                 ui->TimeBar->repaint();
-                this->ui->TurnLabel->setText("Turn : " + QString::number(ui->TimeBar->value()));
+                this->ui->TurnLabel->setText("残りターン : " + QString::number(ui->TimeBar->value()));
 
                 //ボット戦モードならば表記のリアルタイム更新
                 if(this->isbotbattle){
