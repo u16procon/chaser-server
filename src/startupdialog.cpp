@@ -95,7 +95,7 @@ void StartupDialog::setMusicFileList()
 void StartupDialog::setImageThemaList()
 {
     ui->TextureThemeCombo->clear();
-    ui->TextureThemeCombo->addItems({"Light", "Heavy", "Jewel"}); //デフォルトの3テーマの追加
+    ui->TextureThemeCombo->addItems({"あっさり", "こってり", "ほうせき"}); //デフォルトの3テーマの追加
 
     QDir dir("./Image");
 
@@ -108,7 +108,7 @@ void StartupDialog::setImageThemaList()
 }
 
 void StartupDialog::PushedMapSelect(){
-    QString folder = QDir::currentPath();
+    QString folder = QDir::currentPath()+"/Map/";
     QString cap    = tr("マップを開く");
     QString filter = tr("マップファイル (*.map)");
 
@@ -133,9 +133,9 @@ void StartupDialog::SetMapStandby (bool state){
 }
 
 void StartupDialog::ChangedTexture(QString text){
-    if(text == "Light")     this->map.texture_dir_path = ":/Image/Light";
-    else if(text == "Heavy")this->map.texture_dir_path = ":/Image/Heavy";
-    else if(text == "Jewel")this->map.texture_dir_path = ":/Image/Jewel";
+    if(text == "あっさり")     this->map.texture_dir_path = ":/Image/Light";
+    else if(text == "こってり")this->map.texture_dir_path = ":/Image/Heavy";
+    else if(text == "ほうせき")this->map.texture_dir_path = ":/Image/Jewel";
     else this->map.texture_dir_path = "Image/" + text;
 }
 
