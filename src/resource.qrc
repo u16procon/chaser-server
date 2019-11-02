@@ -9,7 +9,6 @@
         <file>Image/Heavy/Item.png</file>
         <file>Image/Heavy/Look.png</file>
         <file>Image/Heavy/Search.png</file>
-
         <file>Image/Jewel/Blind.png</file>
         <file>Image/Jewel/Block.png</file>
         <file>Image/Jewel/Cool.png</file>
@@ -19,7 +18,6 @@
         <file>Image/Jewel/Item.png</file>
         <file>Image/Jewel/Look.png</file>
         <file>Image/Jewel/Search.png</file>
-
         <file>Image/Light/Blind.png</file>
         <file>Image/Light/Block.png</file>
         <file>Image/Light/Cool.png</file>
@@ -29,7 +27,7 @@
         <file>Image/Light/Item.png</file>
         <file>Image/Light/Look.png</file>
         <file>Image/Light/Search.png</file>
-
         <file>Music/ji_023.wav</file>
+        <file>Music/TwinBeeNew.mp3</file>
     </qresource>
 </RCC>

@@ -123,7 +123,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
+        if(this->startup->music_text == "TwinBeeNew"){
+            bgm->setMedia(QUrl("qrc:/Music/TwinBeeNew.mp3"));
+        }else{
+            bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
+        }
         bgm->setVolume(50);
         bgm->play();
     }
