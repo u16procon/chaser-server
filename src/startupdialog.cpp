@@ -84,10 +84,11 @@ void StartupDialog::setMusicFileList()
 {
     QDir dir("./Music");
 
+    ui->GameMusicCombo->clear();
+    ui->GameMusicCombo->addItem("TwinBeeNew");
     if(dir.exists()){ //ディレクトリが存在していたらmp3とwavのファイルをリストに追加する
         QStringList filelist = dir.entryList({"*.mp3", "*.wav"}, QDir::Files|QDir::NoSymLinks);
         //qDebug()<<filelist;
-        ui->GameMusicCombo->clear();
         ui->GameMusicCombo->addItems(filelist);
     }
 }
