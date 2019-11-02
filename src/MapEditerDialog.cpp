@@ -122,7 +122,7 @@ void MapEditerDialog::Export(){
 
     filepath = QFileDialog::getSaveFileName( this,
                                              tr("マップを保存"),
-                                             QDir::homePath(),
+                                             QDir::currentPath()+"/Map/",
                                              tr("マップデータ (*.map)") );
     if(filepath != "")ui->widget->field.Export(filepath);
 }
