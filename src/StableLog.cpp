@@ -2,7 +2,7 @@
 
 
 
-bool StableLog::Write(const QString& str) const{
+void StableLog::Write(const QString& str) const{
     //追加書き込みオープン
     QFile* file = new QFile(filename);
     file->open(QIODevice::Append);
