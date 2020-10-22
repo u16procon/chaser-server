@@ -12,7 +12,7 @@ public:
     QString filename;
 public:
 
-    bool Write(const QString& str)const;
+    void Write(const QString& str)const;
 
     const StableLog& operator<<(const QString& str)const;
 
