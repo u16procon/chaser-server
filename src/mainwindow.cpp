@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QMediaPlayer>
+#include <QRandomGenerator>
 #include "Definition.h"
 
 QString getTime(){
@@ -86,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this->ui->Field->team_pos[i] = this->startup->map.team_first_point[i];
             qDebug() << this->ui->Field->team_pos[i];
         }
-        this->ui->Field->setMap(this->startup->map);
         //ui初期化
         this->ui->Field  ->setMap(this->startup->map);
         this->ui->TimeBar->setMaximum(this->startup->map.turn);
@@ -469,7 +469,7 @@ void MainWindow::StartAnimation(){
     static Field<GameSystem::MAP_OVERLAY> f(this->startup->map.size.y(),
                                             QVector<GameSystem::MAP_OVERLAY>(this->startup->map.size.x(),GameSystem::MAP_OVERLAY::ERASE));
     static int ANIMATION_SIZE = 4;
-    static int ANIMATION_TYPE = qrand() % ANIMATION_SIZE;
+    static int ANIMATION_TYPE = QRandomGenerator::global()->generate() % ANIMATION_SIZE;
     int count = 0;
 
     ui->Field->RefreshOverlay();
@@ -482,8 +482,8 @@ void MainWindow::StartAnimation(){
         if(timer == 1)i_max ++;
         for(int i=0;i<i_max;i++){
             do{
-                pos[i].setX(qrand() % this->startup->map.size.x());
-                pos[i].setY(qrand() % this->startup->map.size.y());
+                pos[i].setX(QRandomGenerator::global()->generate() % this->startup->map.size.x());
+                pos[i].setY(QRandomGenerator::global()->generate() % this->startup->map.size.y());
             }while(timer < startup->map.size.x() * startup->map.size.y() && f[pos[i].y()][pos[i].x()] != GameSystem::MAP_OVERLAY::ERASE);
             f[pos[i].y()][pos[i].x()] = GameSystem::MAP_OVERLAY::NOTHING;
         }
@@ -569,7 +569,7 @@ void MainWindow::ShowTeamAnimation(){
 void MainWindow::BlindAnimation(){
     static int timer = 1;
     static int ANIMATION_SIZE = 1;
-    static int ANIMATION_TYPE = qrand() % ANIMATION_SIZE;
+    static int ANIMATION_TYPE = QRandomGenerator::global()->generate() % ANIMATION_SIZE;
 
     ui->Field->RefreshOverlay();
 
@@ -578,8 +578,8 @@ void MainWindow::BlindAnimation(){
         //ランダムにワサッて
         for(int i=0;i<2;i++){
             do{
-                pos[i].setX(qrand() % this->startup->map.size.x());
-                pos[i].setY(qrand() % this->startup->map.size.y());
+                pos[i].setX(QRandomGenerator::global()->generate() % this->startup->map.size.x());
+                pos[i].setY(QRandomGenerator::global()->generate() % this->startup->map.size.y());
             }while(timer < startup->map.size.x() * startup->map.size.y() &&
                    ui->Field->field.discover[pos[i].y()][pos[i].x()] == GameSystem::Discoverer::Unknown);
             ui->Field->field.discover[pos[i].y()][pos[i].x()] = GameSystem::Discoverer::Unknown;
