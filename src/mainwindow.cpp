@@ -120,14 +120,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!silent)music->play();
     */
 
-    if(!silent){
+    //消音モードじゃない かつ Musicフォルダに音楽が存在する ならBGMセット
+    if(!silent && this->startup->music_text != "none"){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        if(this->startup->music_text == "TwinBeeNew"){
-            bgm->setMedia(QUrl("qrc:/Music/TwinBeeNew.mp3"));
-        }else{
-            bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
-        }
+        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
         bgm->setVolume(50);
         bgm->play();
     }
@@ -342,17 +339,12 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     }
     log << this->ui->WinnerLabel->text() << "\r\n";
 
-    /*
-    if(!silent)music->stop();
-    if(!silent)QSound::play(MUSIC_DIRECTORY + "/Music/ji_023.wav");
-    */
-
     if(!silent)bgm->stop();
 
     if(!silent){
         bgm = new QMediaPlayer;
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Music/ji_023.wav"));
+        bgm->setMedia(QUrl("qrc:/Sound/ji_023.wav"));
         bgm->setVolume(50);
         bgm->play();
     }
