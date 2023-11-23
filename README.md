@@ -26,8 +26,13 @@
 * **ゲーム進行速度** ゲーム中のアニメーションの待ち時間です。初期設定は150[ms]（1000ms=1秒）です。少ないほど高速になりますが、処理時間の都合上一定速度以下にはなりません。
 * **通信タイムアウト時間** TCPクライアントにおけるレスポンスの待ち時間です。長ければ長いほどクライアントがタイムアウトしにくくなります。
 
-## 開発環境
-- MacOSX 10.11.3 ElCapitan  
-- Qt Creator 3.3.0  
-- Desktop Qt 5.4.2 clang 64bit  
+## 開発環境(Qt6)
+- Windows 11 23H2
+- Qt Creator 11.0.3
+- Desktop Qt 6.6.0 MinGW 64-bit
+
+## 開発環境(Qt5)
+- MacOSX 10.11.3 ElCapitan
+- Qt Creator 3.3.0
+- Desktop Qt 5.4.2 clang 64bit
 
