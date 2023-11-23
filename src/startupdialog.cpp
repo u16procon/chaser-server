@@ -88,7 +88,11 @@ void StartupDialog::setMusicFileList()
     if(dir.exists()){ //ディレクトリが存在していたらmp3とwavのファイルをリストに追加する
         QStringList filelist = dir.entryList({"*.mp3", "*.wav"}, QDir::Files|QDir::NoSymLinks);
         //qDebug()<<filelist;
-        ui->GameMusicCombo->addItems(filelist);
+        if(filelist.isEmpty()){ //ディレクトリが存在していても、mp3とwavのファイルがなければ、Noneにして無効化
+            ui->GameMusicCombo->addItem("None");
+            ui->GameMusicCombo->setEnabled(false);
+        }
+        else ui->GameMusicCombo->addItems(filelist);
     }else{ //なかったらNoneにして無効化
         ui->GameMusicCombo->addItem("None");
         ui->GameMusicCombo->setEnabled(false);
