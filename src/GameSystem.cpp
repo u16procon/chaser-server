@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
+#include <QRandomGenerator>
 
 
 
@@ -145,7 +146,7 @@ void GameSystem::Map::CreateRandomMap(){
     turn = 100;
     name = "[RANDOM MAP]";
     for(int i=0;i<TEAM_COUNT;i++){
-        team_first_point[i]  = QPoint(qrand() % size.x(),qrand() % size.y());
+        team_first_point[i]  = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
     }
     field.clear();
     for(int i=0;i<size.y();i++){
@@ -153,7 +154,7 @@ void GameSystem::Map::CreateRandomMap(){
     }
     //ブロック配置
     for(int i=0;i<BLOCK_NUM;i++){
-        QPoint pos(qrand() % size.x(),qrand() % size.y());
+        QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
         bool all_of = true;
         for(int j=0;j<TEAM_COUNT;j++){
             if(!((team_first_point[j]  - pos).manhattanLength() > 1))all_of=false;
@@ -168,7 +169,7 @@ void GameSystem::Map::CreateRandomMap(){
 
     //アイテム配置
     for(int i=0;i<ITEM_NUM;i++){
-        QPoint pos(qrand() % size.x(),qrand() % size.y());
+        QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
 
         bool all_of = true;
         for(int j=0;j<TEAM_COUNT;j++){
