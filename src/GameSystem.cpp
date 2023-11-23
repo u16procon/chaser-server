@@ -191,7 +191,7 @@ void GameSystem::AroundData::finish(){
 QString GameSystem::AroundData::toString(){
     //文字列へ変換
     QString str;
-    str.append('0' + static_cast<int>(this->connect));
+    str.append(static_cast<QChar>('0' + static_cast<int>(this->connect)));
     for(int i=0;i<9;i++){
         if     (this->data[i] == GameSystem::MAP_OBJECT::NOTHING)str.append('0');
         else if(this->data[i] == GameSystem::MAP_OBJECT::TARGET) str.append('1');
