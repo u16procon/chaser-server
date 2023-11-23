@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QMediaPlayer>
+#include <QAudioOutput>
 #include <QRandomGenerator>
 #include "Definition.h"
 
@@ -51,28 +52,28 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings* mSettings;
     QVariant v;
     mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v = mSettings->value( "LogFilepath" );
-    if (v.type() != QVariant::Invalid)path = v.toString();
+    if (v.typeId() != QMetaType::UnknownType)path = v.toString();
     v = mSettings->value( "Gamespeed" );
-    if (v.type() != QVariant::Invalid)FRAME_RATE = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)FRAME_RATE = v.toInt();
     v = mSettings->value( "Silent" );
-    if (v.type() != QVariant::Invalid)silent = v.toBool();
+    if (v.typeId() != QMetaType::UnknownType)silent = v.toBool();
     else silent = false;
 
     v = mSettings->value( "Team" );
-    if (v.type() != QVariant::Invalid)anime_team_time = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)anime_team_time = v.toInt();
 
     //デザイン設定を書き換え
     QSettings* dSettings;
     QVariant v2;
     dSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v2 = dSettings->value( "Dark" );
-    if (v2.type() != QVariant::Invalid)dark = v2.toBool();
+    if (v.typeId() != QMetaType::UnknownType)dark = v2.toBool();
     else dark = false;
     v2 = dSettings->value( "Bot" );
-    if (v2.type() != QVariant::Invalid)isbotbattle = v2.toBool();
+    if (v.typeId() != QMetaType::UnknownType)isbotbattle = v2.toBool();
     else isbotbattle = false;
     if(dark == true)this->anime_map_time -= this->anime_blind_time;
 
@@ -123,9 +124,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //消音モードじゃない かつ Musicフォルダに音楽が存在する ならBGMセット
     if(!silent && this->startup->music_text != "none"){
         bgm = new QMediaPlayer;
+        audio_output = new QAudioOutput;
+        bgm->setAudioOutput(audio_output);
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
-        bgm->setVolume(50);
+        bgm->setSource(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
+        audio_output->setVolume(50);
         bgm->play();
     }
 
@@ -149,20 +152,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ItemLeaveLabel->setText(QString::number(this->ui->Field->leave_items));
 
     v = mSettings->value( "Maximum" );
-    if (v.type() != QVariant::Invalid && v.toBool()){
+    if (v.typeId() != QMetaType::UnknownType && v.toBool()){
         setWindowState(Qt::WindowMaximized);
+
     }
 
 
     //AnimationTime読み込み
     mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     v = mSettings->value( "Map" );
-    if (v.type() != QVariant::Invalid)anime_map_time = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)anime_map_time = v.toInt();
     else{
 
         QSettings* mSettings;
         mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-        mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+        // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
         mSettings->setValue( "Map" , anime_map_time );
         mSettings->setValue( "Team", anime_team_time );
@@ -343,9 +347,11 @@ void MainWindow::Finish(GameSystem::WINNER winner){
 
     if(!silent){
         bgm = new QMediaPlayer;
+        audio_output = new QAudioOutput;
+        bgm->setAudioOutput(audio_output);
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Sound/ji_023.wav"));
-        bgm->setVolume(50);
+        bgm->setSource(QUrl("qrc:/Sound/ji_023.wav"));
+        audio_output->setVolume(50);
         bgm->play();
     }
 

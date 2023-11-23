@@ -11,15 +11,15 @@ DesignDialog::DesignDialog(QWidget *parent) :
 
     QSettings* mSettings;
     mSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     QVariant v = mSettings->value( "Dark" );
-    if (v.type() != QVariant::Invalid)
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->DarkBox->setChecked(v.toBool());
     }
     v = mSettings->value( "Bot" );
-    if(v.type() != QVariant::Invalid){
+    if (v.typeId() != QMetaType::UnknownType){
         ui->BotBox->setChecked(v.toBool());
     }
 }
@@ -41,7 +41,7 @@ void DesignDialog::Export(){
 
     QSettings* mSettings;
     mSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     mSettings->setValue( "Dark"    , GetCheckDark());
     mSettings->setValue( "Bot"     , GetCheckBot());

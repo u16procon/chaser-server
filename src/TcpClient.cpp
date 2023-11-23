@@ -149,8 +149,8 @@ QString TCPClient::GetTeamName(){
         //ここで0xFFFD(utfへの自動変換の失敗)が観測された場合、変換を行う
         for(int i = 0; i < namebuf.size(); i++){
             QChar buffer = namebuf.at(i);
-            //不明な文字が発見された場合、文字コードをUTFに変換
-            if(buffer == 0xFFFD){
+            //不明な文字が発見された場合、文字コードをUTFに変換 (0xFFFD)
+            if(buffer == QChar::ReplacementCharacter){
                 namebuf = QString::fromLocal8Bit(bytebuf);
             }
         }
@@ -171,9 +171,10 @@ TCPClient::TCPClient(QObject *parent) :
 {
     QSettings* mSettings;
     mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード (QSettingsはデフォルトでUTF-8で、変更不可っぽい)
     QVariant v = mSettings->value( "Timeout" );
-    if (v.type() != QVariant::Invalid){
+    // 非推奨 QVariant::Invalid → QMetaType::UnknownType
+    if (v.typeId() != QMetaType::UnknownType){
         TIMEOUT = v.toInt();
     }
     delete mSettings;

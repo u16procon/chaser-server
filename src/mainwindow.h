@@ -8,7 +8,7 @@
 #include <fstream>
 #include <QDateTime>
 #include <QFile>
-#include <QSound>
+#include <QSoundEffect>
 #include <QDataStream>
 #include <QMediaPlayer>
 #include <QThread>
@@ -31,7 +31,7 @@ private:
     QTimer* teamshow_anime; //チーム表示アニメーション
     QTimer* blind_anime;    //まっくらアニメーション
     StartupDialog* startup; //スタートアップダイアログ
-    QSound* music;          //音楽
+    QSoundEffect* music;    //音楽
 
     bool silent;
 
@@ -56,6 +56,7 @@ private:
 
     //音楽
     QMediaPlayer *bgm;
+    QAudioOutput *audio_output;
 
 private slots:
     void SaveFile();

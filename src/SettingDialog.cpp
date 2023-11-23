@@ -9,31 +9,32 @@ SettingDialog::SettingDialog(QWidget *parent) :
 {
     QSettings* mSettings;
     mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     ui->setupUi(this);
 
     QVariant v = mSettings->value( "LogFilepath" );
-    if (v.type() != QVariant::Invalid)
+    // 非推奨 QVariant::Invalid → QMetaType::UnknownType
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->Log->setText(v.toString());
     }
     v = mSettings->value( "Timeout" );
-    if (v.type() != QVariant::Invalid)
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->Timeout->setValue(v.toInt());
     }
     v = mSettings->value( "Gamespeed" );
-    if (v.type() != QVariant::Invalid)
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->Gamespeed->setValue(v.toInt());
     }
     v = mSettings->value( "Silent" );
-    if (v.type() != QVariant::Invalid)
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->SilentCheck->setChecked(v.toBool());
     }
     v = mSettings->value( "Maximum" );
-    if (v.type() != QVariant::Invalid)
+    if (v.typeId() != QMetaType::UnknownType)
     {
         ui->MaximumCheck->setChecked(v.toBool());
     }
@@ -43,7 +44,7 @@ void SettingDialog::Export(){
 
     QSettings* mSettings;
     mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
     mSettings->setValue( "LogFilepath", ui->Log->text() );
     mSettings->setValue( "Timeout"    , ui->Timeout->value() );
