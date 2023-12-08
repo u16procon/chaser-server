@@ -126,7 +126,7 @@ void MapEditerDialog::Export(){
                                              tr("マップデータ (*.map)") );
     if(filepath != "")ui->widget->field.Export(filepath);
 }
-void MapEditerDialog::SelectItem(QListWidgetItem *next, QListWidgetItem *old){
+void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWidgetItem *old){
     if(next){
         QIcon icon = next->icon();
         QCursor myCursor = QCursor(icon.pixmap(icon.actualSize(QSize(20, 20))));
