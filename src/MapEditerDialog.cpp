@@ -5,9 +5,9 @@
 
 MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     QDialog(parent),
+    filepath(""),
     ui(new Ui::MapEditerDialog),
-    clicking(false),
-    filepath("")
+    clicking(false)
 {
     ui->setupUi(this);
 
