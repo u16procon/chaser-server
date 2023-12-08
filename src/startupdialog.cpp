@@ -32,8 +32,10 @@ StartupDialog::StartupDialog(QWidget *parent) :
 
     //ローカルIPの探索
     foreach (const QHostAddress &address, QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost)){
             this->ui->LocalIPLabel->setText(address.toString());
+            break;
+        }
     }
     this->ui->HostName->setText(QHostInfo::localHostName());
 
