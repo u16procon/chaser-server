@@ -30,7 +30,7 @@ public:
 public:
     bool MapRead(const QString& dir);
     void setMusicFileList();
-    void setImageThemaList();
+    void setImageThemeList();
 
     explicit StartupDialog(QWidget *parent = 0);
     ~StartupDialog();
