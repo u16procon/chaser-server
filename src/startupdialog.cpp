@@ -15,7 +15,7 @@ StartupDialog::StartupDialog(QWidget *parent) :
     //UI初期化
     ui->setupUi(this);
     setMusicFileList();
-    setImageThemaList();
+    setImageThemeList();
     music_text = ui->GameMusicCombo->currentText();
     ui->CoolGroupBox->SetPortSpin(2009);
     ui->HotGroupBox ->SetPortSpin(2010);
@@ -99,7 +99,7 @@ void StartupDialog::setMusicFileList()
     }
 }
 
-void StartupDialog::setImageThemaList()
+void StartupDialog::setImageThemeList()
 {
     ui->TextureThemeCombo->clear();
     ui->TextureThemeCombo->addItems({"あっさり", "こってり", "ほうせき"}); //デフォルトの3テーマの追加
