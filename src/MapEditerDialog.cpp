@@ -1,6 +1,5 @@
 #include "MapEditerDialog.h"
 #include "ui_MapEditerDialog.h"
-#include <cmath>
 #include <QFileDialog>
 #include <QDesktopServices>
 
