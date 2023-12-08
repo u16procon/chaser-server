@@ -104,7 +104,7 @@ void StartupDialog::setMusicFileList()
 void StartupDialog::setImageThemeList()
 {
     ui->TextureThemeCombo->clear();
-    ui->TextureThemeCombo->addItems({"あっさり", "こってり", "ほうせき"}); //デフォルトの3テーマの追加
+    ui->TextureThemeCombo->addItems({"ほうせき", "あっさり", "こってり"}); //デフォルトの3テーマの追加
 
     QDir dir("./Image");
 
