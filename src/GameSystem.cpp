@@ -63,9 +63,8 @@ bool GameSystem::Map::Import(QString Filename){
     QFile file(Filename);
     if (file.open(QIODevice::ReadOnly)){
         char buf[1024]={};
-        int str_length;
         int calm=0;
-        while((str_length = file.readLine(buf,1024)) != -1){
+        while(file.readLine(buf,1024) != -1){
             QString str = QString::fromLatin1(buf);
             str.replace("\r","");
             str.replace("\n","");
