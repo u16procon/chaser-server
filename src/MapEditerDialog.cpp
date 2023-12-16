@@ -14,6 +14,14 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     //マウス追跡を有効化
     setMouseTracking(true);
 
+    //ブロック、アイテムの数をカウントするリストを追加
+    ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(0))));
+    ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(0))));
+    //カウント部分のアイコンを設定
+    ui->ObjectCounter->setIconSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8));
+    ui->ObjectCounter->item(0)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
+    ui->ObjectCounter->item(1)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
+
     ComboChanged("決戦(15x17)");
     ui->widget->setMap(map);
     ui->listWidget->addItem(new QListWidgetItem("Nothing"));
@@ -26,17 +34,8 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     ui->listWidget->item(2)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
     ui->listWidget->item(3)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
 
-    //ブロックの数をカウントして表示
-    int counter = 0;
-    counter = ui->widget->GetMapObjectCount(GameSystem::MAP_OBJECT::BLOCK);
-    ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(counter))));
-    //アイテムの数をカウントして表示
-    counter = ui->widget->GetMapObjectCount(GameSystem::MAP_OBJECT::ITEM);
-    ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(counter))));
-    //アイコン
-    ui->ObjectCounter->setIconSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8));
-    ui->ObjectCounter->item(0)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
-    ui->ObjectCounter->item(1)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
+    //ブロック、アイテムの数をカウントして表示
+    ReCount();
 
     connect(ui->listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(SelectItem(QListWidgetItem*,QListWidgetItem*)));
     connect(ui->TurnSpin  ,SIGNAL(valueChanged(int))                                    ,this,SLOT(SpinChanged(int)));
@@ -148,6 +147,7 @@ void MapEditerDialog::ComboChanged(QString value){
     resize(QSize(ui->widget->field.size.x()*ICON_SIZE+134,ui->widget->field.size.y()*ICON_SIZE+4));
     ui->widget->setMap(ui->widget->field);
     paintEvent(nullptr);
+    ReCount();
     update();
 
 }
