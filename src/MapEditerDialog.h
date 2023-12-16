@@ -16,6 +16,7 @@ class MapEditerDialog : public QDialog
 
 public:
     static const int IMAGE_PART_SIZE = 25;
+    static const int ICON_SIZE = 50;
     QString filepath;
 
     GameSystem::Map GetMap();
