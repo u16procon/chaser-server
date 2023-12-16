@@ -48,7 +48,7 @@ void GameBoard::resizeEvent(QResizeEvent *event){
 
     ReloadTexture(texture_dir_path);
 }
-void GameBoard::paintEvent(QPaintEvent *event){
+void GameBoard::paintEvent([[maybe_unused]] QPaintEvent *event){
 
     QPainter painter(this);
     painter.setRenderHints( painter.renderHints() | QPainter::Antialiasing );
@@ -233,7 +233,7 @@ void GameBoard::setMap(const GameSystem::Map& map){
 }
 
 
-void GameBoard::PlayAnimation(GameSystem::Method method){
+void GameBoard::PlayAnimation([[maybe_unused]] GameSystem::Method method){
     //アニメーション
 }
 

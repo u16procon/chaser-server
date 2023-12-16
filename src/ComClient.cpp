@@ -3,12 +3,12 @@
 bool ComClient::WaitGetReady(){
     return true;
 }
-GameSystem::Method ComClient::WaitReturnMethod(GameSystem::AroundData data){
+GameSystem::Method ComClient::WaitReturnMethod([[maybe_unused]] GameSystem::AroundData data){
 
     return GameSystem::Method{GameSystem::TEAM::UNKNOWN, GameSystem::Method::ACTION::SEARCH,GameSystem::Method::ROTE::UP};
 }
 
-bool ComClient::WaitEndSharp(GameSystem::AroundData data){
+bool ComClient::WaitEndSharp([[maybe_unused]] GameSystem::AroundData data){
     return true;
 }
 void ComClient::Startup(){
