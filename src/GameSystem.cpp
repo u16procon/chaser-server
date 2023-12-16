@@ -145,9 +145,13 @@ void GameSystem::Map::CreateRandomMap(){
     turn = 100;
     name = "[RANDOM MAP]";
 
-    team_first_point[0] = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
+    //同じ座標にCOOLとHOTが生成されないようにする
+    do{
+        team_first_point[0] = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
+    }while(team_first_point[0] == QPoint(size.x()/2, size.y()/2));
+
     //点対称に配置
-    team_first_point[1] = QPoint(size.x() - team_first_point[0].x() - 1, size.y() - team_first_point[0].y() - 1);
+    team_first_point[1] = MirrorPoint(team_first_point[0]);
 
     field.clear();
     for(int i=0;i<size.y();i++){
@@ -156,6 +160,7 @@ void GameSystem::Map::CreateRandomMap(){
     //ブロック配置
     for(int i=0;i<BLOCK_NUM/2;i++){
         QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
+        auto mirrorPos = MirrorPoint(pos);
         bool all_of = true;
         for(int j=0;j<TEAM_COUNT;j++){
             if(!((team_first_point[j]  - pos).manhattanLength() > 1))all_of=false;
@@ -163,7 +168,7 @@ void GameSystem::Map::CreateRandomMap(){
         if(all_of && field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK){
             field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::BLOCK;
             //点対称に配置
-            field[size.y() - pos.y() - 1][size.x() - pos.x() - 1] = GameSystem::MAP_OBJECT::BLOCK;
+            field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::BLOCK;
         }else{
             i--;
             continue;
@@ -173,6 +178,7 @@ void GameSystem::Map::CreateRandomMap(){
     //アイテム配置
     for(int i=0;i<ITEM_NUM/2;i++){
         QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
+        auto mirrorPos = MirrorPoint(pos);
 
         bool all_of = true;
         for(int j=0;j<TEAM_COUNT;j++){
@@ -181,12 +187,14 @@ void GameSystem::Map::CreateRandomMap(){
         if(all_of && field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::ITEM){
             field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::ITEM;
             //点対称に配置
-            field[size.y() - pos.y() - 1][size.x() - pos.x() - 1] = GameSystem::MAP_OBJECT::ITEM;
+            field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::ITEM;
         }else{
             i--;
             continue;
         }
     }
+    // 真ん中は必ずアイテムにする
+    field[size.y()/2][size.x()/2] = GameSystem::MAP_OBJECT::ITEM;
 }
 
 void GameSystem::AroundData::finish(){
