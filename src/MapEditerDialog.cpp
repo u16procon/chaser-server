@@ -20,7 +20,7 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     ui->listWidget->addItem(new QListWidgetItem("Target"));
     ui->listWidget->addItem(new QListWidgetItem("Block"));
     ui->listWidget->addItem(new QListWidgetItem("Item"));
-    ui->listWidget->setIconSize(QSize(32,32));
+    ui->listWidget->setIconSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8));
     ui->listWidget->item(0)->setIcon(QIcon(map.texture_dir_path + "/Floor.png"));
     ui->listWidget->item(1)->setIcon(QIcon(map.texture_dir_path + "/Cool.png"));
     ui->listWidget->item(2)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
@@ -34,7 +34,7 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     counter = ui->widget->GetMapObjectCount(GameSystem::MAP_OBJECT::ITEM);
     ui->ObjectCounter->addItem(new QListWidgetItem("×" + QString(QString::number(counter))));
     //アイコン
-    ui->ObjectCounter->setIconSize(QSize(32,32));
+    ui->ObjectCounter->setIconSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8));
     ui->ObjectCounter->item(0)->setIcon(QIcon(map.texture_dir_path + "/Block.png"));
     ui->ObjectCounter->item(1)->setIcon(QIcon(map.texture_dir_path + "/Item.png"));
 
@@ -47,7 +47,7 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
 
 MapEditerDialog::~MapEditerDialog()
 {
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    // QApplication::setOverrideCursor(Qt::ArrowCursor);
     delete ui;
 }
 GameSystem::Map MapEditerDialog::GetMap(){
@@ -128,8 +128,10 @@ void MapEditerDialog::Export(){
 void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWidgetItem *old){
     if(next){
         QIcon icon = next->icon();
-        QCursor myCursor = QCursor(icon.pixmap(icon.actualSize(QSize(20, 20))));
-        QApplication::setOverrideCursor(myCursor);
+        QCursor myCursor = QCursor(icon.pixmap(icon.actualSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8))));
+        // QApplication::setOverrideCursor(myCursor);
+        // widget内(GameBoard内)でのみカーソルを変える
+        ui->widget->setCursor(myCursor);
     }
 }
 
@@ -143,7 +145,7 @@ void MapEditerDialog::ComboChanged(QString value){
 
     this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
     this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::HOT )] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::HOT )];
-    resize(QSize(ui->widget->field.size.x()*25+134,ui->widget->field.size.y()*25+4));
+    resize(QSize(ui->widget->field.size.x()*ICON_SIZE+134,ui->widget->field.size.y()*ICON_SIZE+4));
     ui->widget->setMap(ui->widget->field);
     paintEvent(nullptr);
     update();
