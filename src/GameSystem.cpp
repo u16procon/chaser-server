@@ -139,20 +139,22 @@ bool GameSystem::Map::Export(QString Filename){
 }
 
 void GameSystem::Map::CreateRandomMap(){
-    const int BLOCK_NUM = 100;
-    const int ITEM_NUM = 10;
+    const int BLOCK_NUM = 20;
+    const int ITEM_NUM = 50;
 
     turn = 100;
     name = "[RANDOM MAP]";
-    for(int i=0;i<TEAM_COUNT;i++){
-        team_first_point[i]  = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
-    }
+
+    team_first_point[0] = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
+    //点対称に配置
+    team_first_point[1] = QPoint(size.x() - team_first_point[0].x() - 1, size.y() - team_first_point[0].y() - 1);
+
     field.clear();
     for(int i=0;i<size.y();i++){
         field.push_back(QVector<GameSystem::MAP_OBJECT>(size.x()));
     }
     //ブロック配置
-    for(int i=0;i<BLOCK_NUM;i++){
+    for(int i=0;i<BLOCK_NUM/2;i++){
         QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
         bool all_of = true;
         for(int j=0;j<TEAM_COUNT;j++){
@@ -160,6 +162,8 @@ void GameSystem::Map::CreateRandomMap(){
         }
         if(all_of && field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK){
             field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::BLOCK;
+            //点対称に配置
+            field[size.y() - pos.y() - 1][size.x() - pos.x() - 1] = GameSystem::MAP_OBJECT::BLOCK;
         }else{
             i--;
             continue;
@@ -167,7 +171,7 @@ void GameSystem::Map::CreateRandomMap(){
     }
 
     //アイテム配置
-    for(int i=0;i<ITEM_NUM;i++){
+    for(int i=0;i<ITEM_NUM/2;i++){
         QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
 
         bool all_of = true;
@@ -176,6 +180,8 @@ void GameSystem::Map::CreateRandomMap(){
         }
         if(all_of && field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::ITEM){
             field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::ITEM;
+            //点対称に配置
+            field[size.y() - pos.y() - 1][size.x() - pos.x() - 1] = GameSystem::MAP_OBJECT::ITEM;
         }else{
             i--;
             continue;
