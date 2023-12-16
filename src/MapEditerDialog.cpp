@@ -42,6 +42,9 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     ui->listWidget->setCurrentRow(0);
 
     ui->TurnSpin->setValue(ui->widget->field.turn);
+
+    //ランダム生成ボタン
+    connect(ui->randomGenerateButton, SIGNAL(pressed()), this, SLOT(randomGenerateButtonPressed()));
 }
 
 MapEditerDialog::~MapEditerDialog()
@@ -149,7 +152,6 @@ void MapEditerDialog::ComboChanged(QString value){
     paintEvent(nullptr);
     ReCount();
     update();
-
 }
 
 //アイテム数えなおし
@@ -161,4 +163,9 @@ void MapEditerDialog::ReCount(){
     //アイテムの数をカウントして表示
     counter = ui->widget->GetMapObjectCount(GameSystem::MAP_OBJECT::ITEM);
     ui->ObjectCounter->item(1)->setText("×" + QString(QString::number(counter)));
+}
+
+//ランダムマップの生成しなおし
+void MapEditerDialog::randomGenerateButtonPressed(){
+    ComboChanged(ui->comboBox->currentText());
 }

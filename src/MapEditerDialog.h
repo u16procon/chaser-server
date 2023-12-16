@@ -39,6 +39,7 @@ private slots:
     void SpinChanged(int value);
     void ComboChanged(QString value);
     void ReCount();
+    void randomGenerateButtonPressed();
 
 public slots:
     void SelectItem(QListWidgetItem* next, QListWidgetItem* old);
