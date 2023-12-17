@@ -107,6 +107,7 @@ public:
         void CreateRandomMap();
         bool Import(QString Filename);
         bool Export(QString Filename);
+        bool CheckBlockRole(QPoint pos);
     };
 
     //クライアントの行動
