@@ -1,16 +1,18 @@
 
 # AsahikawaProcon-Server
 
-<img src="https://raw.githubusercontent.com/hal1437/AsahikawaProcon-Server/master/doc/Screenshot3.png" width="800">
-<img src="https://raw.githubusercontent.com/hal1437/AsahikawaProcon-Server/master/doc/Screenshot1.png" width="400">
-<img src="https://raw.githubusercontent.com/hal1437/AsahikawaProcon-Server/master/doc/Screenshot2.png" width="400">
-
 北海道旭川市で毎年開催される、[U-16旭川プログラミングコンテスト](http://www.procon-asahikawa.org/)で使用されるサーバーです。
 
 ルールや通信仕様の詳細は公式サイトや同梱のdocファイル等を参照してください。
 
 このサーバーはC++とクロスプラットフォームライブラリQtによって開発されています。
 現在のサーバーではドキュメント通りの通信仕様であるため、過去に旭川プロコンに使用されたライブラリ・クライアントと互換性を持ちます。
+
+<div align="center">
+  <img src="doc/Screenshot3.png" width=800>
+  <img src="doc/Screenshot1.png" width=600>
+  <img src="doc/Screenshot2.png" width=600>
+</div>
 
 ## クライアント
 このサーバーは通常TCPで接続するクライントを、別の特殊なクライアントで代用することが可能です。
