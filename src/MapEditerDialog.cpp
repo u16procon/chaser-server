@@ -141,7 +141,7 @@ void MapEditerDialog::ComboChanged(QString value){
     if(value=="広域(21x17)"){
         this->ui->widget->field.SetSize(QPoint(21,17));
     }
-    if(value=="決戦(15x17)"){
+    else if(value=="決戦(15x17)"){
         this->ui->widget->field.SetSize(QPoint(15,17));
     }
 
@@ -173,5 +173,20 @@ void MapEditerDialog::ReCount(){
 
 //ランダムマップの生成しなおし
 void MapEditerDialog::randomGenerateButtonPressed(){
-    ComboChanged(ui->comboBox->currentText());
+    auto fieldSizeText = ui->comboBox->currentText();
+
+    if(fieldSizeText=="広域(21x17)"){
+        this->ui->widget->field.SetSize(QPoint(21,17));
+    }
+    else if(fieldSizeText=="決戦(15x17)"){
+        this->ui->widget->field.SetSize(QPoint(15,17));
+    }
+
+    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
+    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::HOT )] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::HOT )];
+
+    ui->widget->setMap(ui->widget->field);
+    paintEvent(nullptr);
+    ReCount();
+    update();
 }
