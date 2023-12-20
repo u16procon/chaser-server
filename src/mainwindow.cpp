@@ -109,6 +109,11 @@ MainWindow::MainWindow(QWidget *parent) :
         exit(0);
     }
 
+    //画面の最大高さをもとに、ウインドウの最大高さを決める
+    int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
+    //画面のサイズに合わせてリサイズ
+    resize(QSize(window_height+350, window_height));
+
     player = 0;
 
     startup_anime = new QTimer();
@@ -142,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->Field->team_pos[i].setX(-1);
         ui->Field->team_pos[i].setY(-1);
     }
-    
+
     //アイテム数ラベルセット
     for(int i=0;i<startup->map.size.y();i++){
        for(int j=0;j<startup->map.size.x();j++){
