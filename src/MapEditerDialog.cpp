@@ -147,7 +147,13 @@ void MapEditerDialog::ComboChanged(QString value){
 
     this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
     this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::HOT )] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::HOT )];
-    resize(QSize(ui->widget->field.size.x()*ICON_SIZE+134,ui->widget->field.size.y()*ICON_SIZE+4));
+
+    //ウインドウの縦横のマス目の比を取る
+    double window_width_per_height = static_cast<double>(ui->widget->field.size.x())/ui->widget->field.size.y();
+    //画面の最大高さをもとに、ウインドウの最大高さを決める
+    int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
+
+    resize(QSize(window_height*window_width_per_height+134, window_height+4));
     ui->widget->setMap(ui->widget->field);
     paintEvent(nullptr);
     ReCount();
