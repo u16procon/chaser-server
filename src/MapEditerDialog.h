@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMouseEvent>
 #include <QListWidgetItem>
+#include <QMessageBox>
 #include "GameSystem.h"
 
 namespace Ui {
