@@ -137,16 +137,8 @@ void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWi
     }
 }
 
-void MapEditerDialog::ComboChanged(QString value){
-    if(value=="広域(21x17)"){
-        this->ui->widget->field.SetSize(QPoint(21,17));
-    }
-    else if(value=="決戦(15x17)"){
-        this->ui->widget->field.SetSize(QPoint(15,17));
-    }
-
-    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
-    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::HOT )] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::HOT )];
+void MapEditerDialog::ComboChanged([[maybe_unused]] QString value){
+    randomGenerateButtonPressed();
 
     //ウインドウの縦横のマス目の比を取る
     double window_width_per_height = static_cast<double>(ui->widget->field.size.x())/ui->widget->field.size.y();
@@ -154,9 +146,8 @@ void MapEditerDialog::ComboChanged(QString value){
     int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
 
     resize(QSize(window_height*window_width_per_height+134, window_height+4));
-    ui->widget->setMap(ui->widget->field);
+
     paintEvent(nullptr);
-    ReCount();
     update();
 }
 
@@ -176,10 +167,10 @@ void MapEditerDialog::randomGenerateButtonPressed(){
     auto fieldSizeText = ui->comboBox->currentText();
 
     if(fieldSizeText=="広域(21x17)"){
-        this->ui->widget->field.SetSize(QPoint(21,17));
+        this->ui->widget->field.SetSize(QPoint(21,17), ui->BlockSpin->value(), ui->ItemSpin->value());
     }
     else if(fieldSizeText=="決戦(15x17)"){
-        this->ui->widget->field.SetSize(QPoint(15,17));
+        this->ui->widget->field.SetSize(QPoint(15,17), ui->BlockSpin->value(), ui->ItemSpin->value());
     }
 
     this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
@@ -189,4 +180,11 @@ void MapEditerDialog::randomGenerateButtonPressed(){
     paintEvent(nullptr);
     ReCount();
     update();
+
+    if(this->ui->BlockSpin->value() % 2 != 0) // ブロック数が奇数なら警告
+        QMessageBox::information(this, tr("警告"), tr("ブロックは必ず偶数個で生成されます"));
+
+    if(this->ui->ItemSpin->value() % 2 == 0) // アイテム数が偶数なら警告
+        QMessageBox::information(this, tr("警告"), tr("アイテムは必ず奇数個で生成されます"));
+
 }
