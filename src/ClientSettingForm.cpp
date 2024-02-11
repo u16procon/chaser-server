@@ -11,12 +11,18 @@ ClientSettingForm::ClientSettingForm(QWidget *parent) :
     connect(this->client ,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
     connect(this->client ,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
 
+    //Windowsでボットのexeファイルがあるときのみ、ボットプログラムを動かせるように設定
+    #ifdef Q_OS_WINDOWS
+        if(QFile::exists("./2019-U16asahikawaBot/u16asahikawaBot.exe"))
+            ui->ComboBox->addItem("botV4");
+    #endif
 }
 
 ClientSettingForm::~ClientSettingForm()
 {
     delete ui;
     delete this->client;
+    delete botProcess;
 }
 
 
@@ -90,6 +96,24 @@ void ClientSettingForm::ComboBoxChenged(QString text){
         this->ui->ConnectButton->setEnabled(false);
         if(text=="自動くん")this->client = new ComClient(this);
         if(text=="ManualClient")this->client = new ManualClient(this);
+
+        //ボットを接続
+        if(text=="botV4"){
+            this->client = new TCPClient(this);
+
+            //待機開始
+            ConnectionToggled(true);
+
+            botProcess = new QProcess();
+
+            // "u16asahikawaBot.exe a:127.0.0.1 p:2009 n:botV4"のような文字列を作る
+            QString command = "./2019-U16asahikawaBot/u16asahikawaBot.exe";
+            QStringList option;
+
+            option << "a:127.0.0.1" << "p:" + QString::number(ui->PortSpinBox->value()) << "n:botV4";
+
+            botProcess->start(command, option);
+        }
     }
 
     emit Standby(this,false);
