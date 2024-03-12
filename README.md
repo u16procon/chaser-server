@@ -20,6 +20,8 @@
 * **TCPユーザー** 通常のクライアントです。クライアントとなるPCのAIにより動作します。
 * **自動くん** 特に何もしないモードです。デバッグにどうぞ。
 * **ManualClient** 別ウインドウでコントローラが開かれ、ユーザー直接を操作できます。
+* **botV4** [2020年版のボットプログラム](https://www.procon-asahikawa.org/files/U16asahikawaBot.zip)が動作します。
+  ただし、OSはWindows限定で ./2019-U16asahikawaBot/u16asahikawaBot.exe がある場合のみ起動可能です。
 
 ## サーバー設定
 サーバーの動作設定ができます。また、**設定は再起動後有効になります。**
@@ -30,7 +32,7 @@
 
 ## 開発環境(Qt6)
 - Windows 11 23H2
-- Qt Creator 12.0.0
+- Qt Creator 12.0.2
 - Desktop Qt 6.6.1 MinGW 64-bit
 
 ## 開発環境(Qt5)
