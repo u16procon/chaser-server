@@ -32,8 +32,8 @@
 
 ## 開発環境(Qt6)
 - Windows 11 23H2
-- Qt Creator 12.0.2
-- Desktop Qt 6.6.1 MinGW 64-bit
+- Qt Creator 13.0.0
+- Desktop Qt 6.6.3 MinGW 64-bit
 
 ## 開発環境(Qt5)
 - MacOSX 10.11.3 ElCapitan
