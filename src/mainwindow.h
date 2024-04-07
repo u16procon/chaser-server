@@ -47,6 +47,9 @@ private:
 
     GameSystem::WINNER win;
 
+    static QString getTime();
+    static QString convertString(GameSystem::Method method);
+
 protected:
     void keyPressEvent(QKeyEvent* event);
 
