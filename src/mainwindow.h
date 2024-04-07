@@ -31,32 +31,31 @@ private:
     QTimer* teamshow_anime; //チーム表示アニメーション
     QTimer* blind_anime;    //まっくらアニメーション
     StartupDialog* startup; //スタートアップダイアログ
-    QSoundEffect* music;    //音楽
+    QMediaPlayer *bgm;           //音楽
+    QAudioOutput *audio_output; //音声出力
 
     bool silent;
 
-    bool dark;              //暗転処理
-    bool isbotbattle;       //ボット戦モード
+    bool dark;         //暗転処理
+    bool isbotbattle; //ボット戦モード
 
-    QFile* file;    //ログファイル
-    StableLog log;//ログストリーム
-    int anime_map_time  = 6000;//マップ構築アニメーション時間
-    int anime_team_time = 2000;//チーム配置アニメーション時間
-    int anime_blind_time = 1000;//まっくらアニメーション時間
+    QFile* file;   //ログファイル
+    StableLog log; //ログストリーム
+    int anime_map_time   = 6000; //マップ構築アニメーション時間
+    int anime_team_time  = 2000; //チーム配置アニメーション時間
+    int anime_blind_time = 1000; //まっくらアニメーション時間
 
     GameSystem::WINNER win;
+
 protected:
     void keyPressEvent(QKeyEvent* event);
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
-
-    //音楽
-    QMediaPlayer *bgm;
-    QAudioOutput *audio_output;
 
 private slots:
     void SaveFile();

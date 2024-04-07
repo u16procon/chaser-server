@@ -1,6 +1,7 @@
 #include "BaseClient.h"
 
-void BaseClient::Startup(){
+void BaseClient::Startup()
+{
 
 }
 
@@ -16,4 +17,3 @@ BaseClient::~BaseClient()
 {
 
 }
-
