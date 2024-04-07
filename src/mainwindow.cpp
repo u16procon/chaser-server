@@ -7,10 +7,13 @@
 #include <QRandomGenerator>
 #include "Definition.h"
 
-QString getTime(){
+QString MainWindow::getTime()
+{
     return QString("[") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + QString("]");
 }
-QString convertString(GameSystem::Method method){
+
+QString MainWindow::convertString(GameSystem::Method method)
+{
     QString str;
     if(method.action == GameSystem::Method::ACTION::GETREADY)str += "GetReady";
     if(method.action == GameSystem::Method::ACTION::LOOK)    str += "Look";
