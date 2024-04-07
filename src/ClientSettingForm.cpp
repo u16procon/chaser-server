@@ -25,8 +25,8 @@ ClientSettingForm::~ClientSettingForm()
     delete botProcess;
 }
 
-
-void ClientSettingForm::SetStandby (){
+void ClientSettingForm::SetStandby()
+{
     this->ui->NameLabel ->setText(this->client->Name == "" ? "Hot" : this->client->Name);
     this->ui->IPLabel   ->setText(this->client->IP);
     this->ui->StateLabel->setText("準備完了");
@@ -37,12 +37,15 @@ void ClientSettingForm::SetStandby (){
     //this->ui->ServerStartButton->setEnabled  (hot_standby && cool_standby && map_standby);
 }
 
-void ClientSettingForm::Connected  (){
+void ClientSettingForm::Connected()
+{
     this->ui->IPLabel      ->setText(this->client->IP);
     this->ui->StateLabel   ->setText("接続中");
     this->ui->ConnectButton->setText("　切断　");
 }
-void ClientSettingForm::DisConnected(){
+
+void ClientSettingForm::DisConnected()
+{
 
     //this->client->Startup();
 
@@ -60,7 +63,8 @@ void ClientSettingForm::DisConnected(){
     emit Standby(this,false);
 }
 
-void ClientSettingForm::ConnectionToggled(bool state){
+void ClientSettingForm::ConnectionToggled(bool state)
+{
     if(state){
         //TCP待機開始
         dynamic_cast<TCPClient*>(this->client)->OpenSocket(ui->PortSpinBox->value());
@@ -81,7 +85,8 @@ void ClientSettingForm::ConnectionToggled(bool state){
     }
 }
 
-void ClientSettingForm::ComboBoxChenged(QString text){
+void ClientSettingForm::ComboBoxChenged(QString text)
+{
     //接続初期化
     delete client;
     if(text=="TCPユーザー"){
@@ -123,7 +128,8 @@ void ClientSettingForm::ComboBoxChenged(QString text){
     connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
     this->client->Startup();
 }
-void ClientSettingForm::SetPortSpin(int num){
+
+void ClientSettingForm::SetPortSpin(int num)
+{
     ui->PortSpinBox->setValue(num);
 }
-

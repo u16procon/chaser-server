@@ -1,10 +1,9 @@
 #include "StableLog.h"
 
-
-
-void StableLog::Write(const QString& str) const{
+void StableLog::Write(const QString &str) const
+{
     //追加書き込みオープン
-    QFile* file = new QFile(filename);
+    QFile *file = new QFile(filename);
     file->open(QIODevice::Append);
     QTextStream log;
     log.setDevice(file);
@@ -16,7 +15,8 @@ void StableLog::Write(const QString& str) const{
     delete file;
 }
 
-const StableLog& StableLog::operator<<(const QString& str)const{
+const StableLog &StableLog::operator<<(const QString &str) const
+{
     Write(str);
     return (*this);
 }
@@ -26,9 +26,10 @@ StableLog::StableLog()
 
 }
 
-StableLog::StableLog(QString filename) : filename(filename){
-
-    QFile* file = new QFile(filename);
+StableLog::StableLog(QString filename)
+    : filename(filename)
+{
+    QFile *file = new QFile(filename);
 
     QTextStream log;
     file->open(QIODevice::WriteOnly);
@@ -43,4 +44,3 @@ StableLog::~StableLog()
 {
 
 }
-

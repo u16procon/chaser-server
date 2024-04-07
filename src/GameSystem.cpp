@@ -5,8 +5,6 @@
 #include <QDebug>
 #include <QRandomGenerator>
 
-
-
 QString GameSystem::TEAM_PROPERTY::getTeamName(GameSystem::TEAM team){
     if(team == GameSystem::TEAM::COOL)return "COOL";
     if(team == GameSystem::TEAM::HOT) return "HOT";
@@ -39,7 +37,6 @@ GameSystem::Method GameSystem::Method::fromString(const QString& str){
     else                  answer.rote   = GameSystem::Method::ROTE::UNKNOWN;
     return answer;
 }
-
 
 GameSystem::Map::Map():
     //デフォルトの設定

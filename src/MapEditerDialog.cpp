@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 
-MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
+MapEditerDialog::MapEditerDialog(GameSystem::Map map, QWidget *parent) :
     QDialog(parent),
     filepath(""),
     ui(new Ui::MapEditerDialog),
@@ -37,8 +37,14 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map,QWidget *parent) :
     //ブロック、アイテムの数をカウントして表示
     ReCount();
 
-    connect(ui->listWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),this,SLOT(SelectItem(QListWidgetItem*,QListWidgetItem*)));
-    connect(ui->TurnSpin  ,SIGNAL(valueChanged(int))                                    ,this,SLOT(SpinChanged(int)));
+    connect(
+        ui->listWidget,
+        SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+        this,
+        SLOT(SelectItem(QListWidgetItem*, QListWidgetItem*)));
+
+    connect(ui->TurnSpin, SIGNAL(valueChanged(int)), this, SLOT(SpinChanged(int)));
+
     ui->listWidget->setCurrentRow(0);
 
     ui->TurnSpin->setValue(ui->widget->field.turn);
@@ -52,36 +58,40 @@ MapEditerDialog::~MapEditerDialog()
     // QApplication::setOverrideCursor(Qt::ArrowCursor);
     delete ui;
 }
+
 GameSystem::Map MapEditerDialog::GetMap(){
     return ui->widget->field;
 }
 
-void MapEditerDialog::mousePressEvent(QMouseEvent *event){
+void MapEditerDialog::mousePressEvent(QMouseEvent *event)
+{
     if(event->button() == Qt::LeftButton){
         this->clicking = true;
         FillItem(event->pos());
     }
 }
-void MapEditerDialog::mouseReleaseEvent(QMouseEvent *event){
+void MapEditerDialog::mouseReleaseEvent(QMouseEvent *event)
+{
     if(event->button() == Qt::LeftButton)this->clicking = false;
 }
-void MapEditerDialog::mouseMoveEvent(QMouseEvent* event){
-    if(clicking){
-        //設置
-        FillItem(event->pos());
-    }
+void MapEditerDialog::mouseMoveEvent(QMouseEvent* event)
+{
+    if(clicking)
+        FillItem(event->pos()); //設置
+
 }
 
-void MapEditerDialog::FillItem(const QPoint& pos){
+void MapEditerDialog::FillItem(const QPoint& pos)
+{
     int left_m,top_m;
-    this->layout()->getContentsMargins(&left_m,&top_m,nullptr,nullptr);
-    QPoint fill_point((pos.x() - left_m)/ui->widget->image_part.width(),(pos.y() - top_m)/ui->widget->image_part.height());
+    this->layout()->getContentsMargins(&left_m, &top_m, nullptr, nullptr);
+    QPoint fill_point((pos.x() - left_m)/ui->widget->image_part.width(), (pos.y() - top_m)/ui->widget->image_part.height());
 
     //有効範囲内でなければスキップ
     if(fill_point.x() < 0 || fill_point.x() >= ui->widget->field.size.x() ||
        fill_point.y() < 0 || fill_point.y() >= ui->widget->field.size.y())return;
 
-    GameSystem::MAP_OBJECT obj;
+    GameSystem::MAP_OBJECT obj = GameSystem::MAP_OBJECT::NOTHING;
     if     (ui->listWidget->selectedItems().first()->text() == "Nothing")obj = GameSystem::MAP_OBJECT::NOTHING;
     else if(ui->listWidget->selectedItems().first()->text() == "Block"  )obj = GameSystem::MAP_OBJECT::BLOCK;
     else if(ui->listWidget->selectedItems().first()->text() == "Item"   )obj = GameSystem::MAP_OBJECT::ITEM;
@@ -105,8 +115,9 @@ void MapEditerDialog::FillItem(const QPoint& pos){
     update();
 }
 
-void MapEditerDialog::Clear(){
-    for(auto& v1 :ui->widget->field.field){
+void MapEditerDialog::Clear()
+{
+    for(auto& v1 : ui->widget->field.field){
         for(auto& v2 : v1){
             v2 = GameSystem::MAP_OBJECT::NOTHING;
         }
@@ -116,18 +127,25 @@ void MapEditerDialog::Clear(){
 
     update();
 }
+
 void MapEditerDialog::SpinChanged(int value){
+
     ui->widget->field.turn = value;
 }
-void MapEditerDialog::Export(){
 
-    filepath = QFileDialog::getSaveFileName( this,
-                                             tr("マップを保存"),
-                                             QDir::currentPath()+"/Map/",
-                                             tr("マップデータ (*.map)") );
+void MapEditerDialog::Export()
+{
+
+    filepath = QFileDialog::getSaveFileName(
+        this,
+        tr("マップを保存"),
+        QDir::currentPath()+"/Map/",
+        tr("マップデータ (*.map)"));
     if(filepath != "")ui->widget->field.Export(filepath);
 }
-void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWidgetItem *old){
+
+void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWidgetItem *old)
+{
     if(next){
         QIcon icon = next->icon();
         QCursor myCursor = QCursor(icon.pixmap(icon.actualSize(QSize(ICON_SIZE*0.8, ICON_SIZE*0.8))));
@@ -137,7 +155,8 @@ void MapEditerDialog::SelectItem(QListWidgetItem *next, [[maybe_unused]] QListWi
     }
 }
 
-void MapEditerDialog::ComboChanged([[maybe_unused]] QString value){
+void MapEditerDialog::ComboChanged([[maybe_unused]] QString value)
+{
     randomGenerateButtonPressed();
 
     //ウインドウの縦横のマス目の比を取る
@@ -152,7 +171,8 @@ void MapEditerDialog::ComboChanged([[maybe_unused]] QString value){
 }
 
 //アイテム数えなおし
-void MapEditerDialog::ReCount(){
+void MapEditerDialog::ReCount()
+{
     //ブロックの数をカウントして表示
     int counter = 0;
     counter = ui->widget->GetMapObjectCount(GameSystem::MAP_OBJECT::BLOCK);
@@ -163,7 +183,8 @@ void MapEditerDialog::ReCount(){
 }
 
 //ランダムマップの生成しなおし
-void MapEditerDialog::randomGenerateButtonPressed(){
+void MapEditerDialog::randomGenerateButtonPressed()
+{
     auto fieldSizeText = ui->comboBox->currentText();
 
     if(fieldSizeText=="広域(21x17)"){

@@ -26,8 +26,8 @@ QString convertString(GameSystem::Method method){
     return str;
 }
 
-
-void MainWindow::keyPressEvent(QKeyEvent * event){
+void MainWindow::keyPressEvent([[maybe_unused]] QKeyEvent *event)
+{
     //縦に比率を合わせる
     // if(event->key()==Qt::Key_F){
     //     int left_margin=0,right_margin=0;
@@ -92,9 +92,16 @@ MainWindow::MainWindow(QWidget *parent) :
         this->ui->Field  ->setMap(this->startup->map);
         this->ui->TimeBar->setMaximum(this->startup->map.turn);
         this->ui->TimeBar->setValue  (this->startup->map.turn);
-        this->ui->TurnLabel     ->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
-        this->ui->CoolNameLabel ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ? "Cool" : this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
-        this->ui->HotNameLabel  ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ? "Hot"  : this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
+        this->ui->TurnLabel->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
+        this->ui->CoolNameLabel->setText(
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ?
+            "Cool" :
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
+
+	this->ui->HotNameLabel->setText(
+	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ?
+	    "Hot" :
+	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
 
         //ボット戦モードならば表記の変更
         if(this->isbotbattle){
@@ -185,11 +192,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::SaveFile(){
+void MainWindow::SaveFile()
+{
     file->close();
 }
 
-void MainWindow::StepGame(){
+void MainWindow::StepGame()
+{
     //ゲーム進行
     static GameSystem::Method team_mehod[TEAM_COUNT];
     this->ui->Field->RefreshOverlay();
@@ -313,8 +322,8 @@ void MainWindow::StepGame(){
     getready_flag = !getready_flag;
 }
 
-void MainWindow::RefreshItem(GameSystem::Method method){
-
+void MainWindow::RefreshItem(GameSystem::Method method)
+{
     static int leave_item = 0;
     if(leave_item == 0)leave_item = this->ui->Field->leave_items;
     if(this->ui->Field->leave_items != leave_item){
@@ -336,7 +345,8 @@ void MainWindow::RefreshItem(GameSystem::Method method){
 }
 
 //終了処理
-void MainWindow::Finish(GameSystem::WINNER winner){
+void MainWindow::Finish(GameSystem::WINNER winner)
+{
     this->clock->stop();
     QString append_str = "";
     //disconnect
@@ -400,7 +410,9 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     */
     //log.close();
 }
-GameSystem::WINNER MainWindow::Judge(){
+
+GameSystem::WINNER MainWindow::Judge()
+{
     bool team_lose[TEAM_COUNT];
 
     for(int i=0;i<TEAM_COUNT;i++)team_lose[i] = false;
@@ -466,8 +478,8 @@ GameSystem::WINNER MainWindow::Judge(){
     else return GameSystem::WINNER::CONTINUE;
 }
 
-
-void MainWindow::StartAnimation(){
+void MainWindow::StartAnimation()
+{
     static int timer = 1;
     static Field<GameSystem::MAP_OVERLAY> f(this->startup->map.size.y(),
                                             QVector<GameSystem::MAP_OVERLAY>(this->startup->map.size.x(),GameSystem::MAP_OVERLAY::ERASE));
@@ -543,8 +555,8 @@ void MainWindow::StartAnimation(){
     repaint();
 }
 
-
-void MainWindow::ShowTeamAnimation(){
+void MainWindow::ShowTeamAnimation()
+{
     static int team_count;
 
     ui->Field->team_pos[team_count] = this->startup->map.team_first_point[team_count];
@@ -569,7 +581,8 @@ void MainWindow::ShowTeamAnimation(){
     team_count++;
 }
 
-void MainWindow::BlindAnimation(){
+void MainWindow::BlindAnimation()
+{
     static int timer = 1;
     static int ANIMATION_SIZE = 1;
     static int ANIMATION_TYPE = QRandomGenerator::global()->generate() % ANIMATION_SIZE;

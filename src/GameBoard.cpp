@@ -3,8 +3,8 @@
 #include <QThread>
 #include <QtAlgorithms>
 
-#define MIN(x,y) ((x < y)? x : y)
-#define MAX(x,y) ((x > y)? x : y)
+// #define MIN(x,y) ((x < y)? x : y)
+// #define MAX(x,y) ((x > y)? x : y)
 
 void GameBoard::PickItem(GameSystem::Method method){
 
@@ -284,4 +284,3 @@ void GameBoard::ReloadTexture(QString tex_dir_path){
         if(!img.isNull())img = img.scaled(image_part.width(),image_part.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     }
 }
-
