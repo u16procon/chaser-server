@@ -1,5 +1,6 @@
 #include "TcpClient.h"
 #include <QSettings>
+#include <QRegularExpression>
 
 QString TCPClient::VisibilityString(QString str)
 {
@@ -181,6 +182,10 @@ QString TCPClient::GetTeamName()
                 namebuf = QString::fromLocal8Bit(bytebuf);
             }
         }
+
+        //名前のエスケープ処理(改行やタブなどの文字を削除)
+        static const auto REX = QRegularExpression("[\a\b\f\n\r\t\v]");
+        namebuf = namebuf.replace(REX, "");
 
         this->Name = namebuf;
 
