@@ -2,3 +2,5 @@
 *.pro.user*
 build-*
 .DS_Store
+src/build/*
+src/.qtc_clangd/*
