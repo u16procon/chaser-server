@@ -15,34 +15,43 @@ void ManualClientDialog::keyPressEvent(QKeyEvent * event){
 }
 
 GameSystem::Method::ACTION ManualClientDialog::GetAction(){
-    if     (this->ui->WalkRadio->isChecked()) return GameSystem::Method::ACTION::WALK;
-    else if(this->ui->PutRadio->isChecked())  return GameSystem::Method::ACTION::PUT;
+    if     (this->ui->WalkRadio->isChecked())  return GameSystem::Method::ACTION::WALK;
+    else if(this->ui->PutRadio->isChecked())   return GameSystem::Method::ACTION::PUT;
     else if(this->ui->SearchRadio->isChecked())return GameSystem::Method::ACTION::SEARCH;
-    else if(this->ui->LookRadio->isChecked()) return GameSystem::Method::ACTION::LOOK;
-    else                                      return GameSystem::Method::ACTION::UNKNOWN;
+    else if(this->ui->LookRadio->isChecked())  return GameSystem::Method::ACTION::LOOK;
+    else                                       return GameSystem::Method::ACTION::UNKNOWN;
 }
 
-void ManualClientDialog::UPButtonClicked(){
+void ManualClientDialog::UPButtonClicked()
+{
     next_method.rote = GameSystem::Method::ROTE::UP;
     next_method.action = GetAction();
     emit ReadyAction();
 }
-void ManualClientDialog::DOWNButtonClicked(){
+
+void ManualClientDialog::DOWNButtonClicked()
+{
     next_method.rote = GameSystem::Method::ROTE::DOWN;
     next_method.action = GetAction();
     emit ReadyAction();
 }
-void ManualClientDialog::RIGHTButtonClicked(){
+
+void ManualClientDialog::RIGHTButtonClicked()
+{
     next_method.rote = GameSystem::Method::ROTE::RIGHT;
     next_method.action = GetAction();
     emit ReadyAction();
 }
-void ManualClientDialog::LEFTButtonClicked(){
+
+void ManualClientDialog::LEFTButtonClicked()
+{
     next_method.rote = GameSystem::Method::ROTE::LEFT;
     next_method.action = GetAction();
     emit ReadyAction();
 }
-void ManualClientDialog::AppendLog(const QString& str){
+
+void ManualClientDialog::AppendLog(const QString &str)
+{
     this->ui->LogEdit->appendPlainText(str);
 }
 
