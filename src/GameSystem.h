@@ -101,12 +101,13 @@ public:
 
         Map();
 
-        void SetSize(QPoint size);
+        void SetSize(QPoint size, int block_num = 20, int item_num = 51);
         QPoint MirrorPoint(const QPoint& pos);
 
-        void CreateRandomMap();
+        void CreateRandomMap(int block_num = 20, int item_num = 51);
         bool Import(QString Filename);
         bool Export(QString Filename);
+        bool CheckBlockRole(QPoint pos);
     };
 
     //クライアントの行動

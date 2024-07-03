@@ -11,16 +11,22 @@ ClientSettingForm::ClientSettingForm(QWidget *parent) :
     connect(this->client ,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
     connect(this->client ,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
 
+    //Windowsでボットのexeファイルがあるときのみ、ボットプログラムを動かせるように設定
+    #ifdef Q_OS_WINDOWS
+        if(QFile::exists("./2019-U16asahikawaBot/u16asahikawaBot.exe"))
+            ui->ComboBox->addItem("botV4");
+    #endif
 }
 
 ClientSettingForm::~ClientSettingForm()
 {
     delete ui;
     delete this->client;
+    delete botProcess;
 }
 
-
-void ClientSettingForm::SetStandby (){
+void ClientSettingForm::SetStandby()
+{
     this->ui->NameLabel ->setText(this->client->Name == "" ? "Hot" : this->client->Name);
     this->ui->IPLabel   ->setText(this->client->IP);
     this->ui->StateLabel->setText("準備完了");
@@ -31,12 +37,15 @@ void ClientSettingForm::SetStandby (){
     //this->ui->ServerStartButton->setEnabled  (hot_standby && cool_standby && map_standby);
 }
 
-void ClientSettingForm::Connected  (){
+void ClientSettingForm::Connected()
+{
     this->ui->IPLabel      ->setText(this->client->IP);
     this->ui->StateLabel   ->setText("接続中");
     this->ui->ConnectButton->setText("　切断　");
 }
-void ClientSettingForm::DisConnected(){
+
+void ClientSettingForm::DisConnected()
+{
 
     //this->client->Startup();
 
@@ -54,7 +63,8 @@ void ClientSettingForm::DisConnected(){
     emit Standby(this,false);
 }
 
-void ClientSettingForm::ConnectionToggled(bool state){
+void ClientSettingForm::ConnectionToggled(bool state)
+{
     if(state){
         //TCP待機開始
         dynamic_cast<TCPClient*>(this->client)->OpenSocket(ui->PortSpinBox->value());
@@ -75,7 +85,8 @@ void ClientSettingForm::ConnectionToggled(bool state){
     }
 }
 
-void ClientSettingForm::ComboBoxChenged(QString text){
+void ClientSettingForm::ComboBoxChenged(QString text)
+{
     //接続初期化
     delete client;
     if(text=="TCPユーザー"){
@@ -90,6 +101,24 @@ void ClientSettingForm::ComboBoxChenged(QString text){
         this->ui->ConnectButton->setEnabled(false);
         if(text=="自動くん")this->client = new ComClient(this);
         if(text=="ManualClient")this->client = new ManualClient(this);
+
+        //ボットを接続
+        if(text=="botV4"){
+            this->client = new TCPClient(this);
+
+            //待機開始
+            ConnectionToggled(true);
+
+            botProcess = new QProcess();
+
+            // "u16asahikawaBot.exe a:127.0.0.1 p:2009 n:botV4"のような文字列を作る
+            QString command = "./2019-U16asahikawaBot/u16asahikawaBot.exe";
+            QStringList option;
+
+            option << "a:127.0.0.1" << "p:" + QString::number(ui->PortSpinBox->value()) << "n:botV4";
+
+            botProcess->start(command, option);
+        }
     }
 
     emit Standby(this,false);
@@ -99,7 +128,8 @@ void ClientSettingForm::ComboBoxChenged(QString text){
     connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
     this->client->Startup();
 }
-void ClientSettingForm::SetPortSpin(int num){
+
+void ClientSettingForm::SetPortSpin(int num)
+{
     ui->PortSpinBox->setValue(num);
 }
-

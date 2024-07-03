@@ -5,9 +5,6 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QFileDialog>
-#include "TcpClient.h"
-#include "ComClient.h"
-#include "ManualClient.h"
 #include "SettingDialog.h"
 #include "ClientSettingForm.h"
 
@@ -33,7 +30,7 @@ public:
 public:
     bool MapRead(const QString& dir);
     void setMusicFileList();
-    void setImageThemaList();
+    void setImageThemeList();
 
     explicit StartupDialog(QWidget *parent = 0);
     ~StartupDialog();

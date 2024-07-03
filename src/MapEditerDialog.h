@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMouseEvent>
 #include <QListWidgetItem>
+#include <QMessageBox>
 #include "GameSystem.h"
 
 namespace Ui {
@@ -16,6 +17,7 @@ class MapEditerDialog : public QDialog
 
 public:
     static const int IMAGE_PART_SIZE = 25;
+    static const int ICON_SIZE = 50;
     QString filepath;
 
     GameSystem::Map GetMap();
@@ -38,6 +40,7 @@ private slots:
     void SpinChanged(int value);
     void ComboChanged(QString value);
     void ReCount();
+    void randomGenerateButtonPressed();
 
 public slots:
     void SelectItem(QListWidgetItem* next, QListWidgetItem* old);

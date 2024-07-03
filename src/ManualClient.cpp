@@ -10,6 +10,7 @@ bool ManualClient::WaitGetReady(){
     //自動GetReady
     return true;
 }
+
 GameSystem::Method ManualClient::WaitReturnMethod(GameSystem::AroundData data){
     //自動返答
     diag->AppendLog(QString("[GetReady  Response] ") + data.toString());
@@ -21,11 +22,13 @@ GameSystem::Method ManualClient::WaitReturnMethod(GameSystem::AroundData data){
     eventLoop.exec();//GUIからのレスポンスがあるまで待機
     return diag->next_method;
 }
+
 bool ManualClient::WaitEndSharp(GameSystem::AroundData data){
     //自動返答
     diag->AppendLog(QString("[Method Response] ") + data.toString());
     return true;
 }
+
 void ManualClient::Startup(){
     emit Connected();
     emit WriteTeamName();
@@ -47,4 +50,3 @@ ManualClient::~ManualClient()
 {
     diag->hide();
 }
-

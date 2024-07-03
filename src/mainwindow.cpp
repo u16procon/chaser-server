@@ -3,13 +3,17 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QMediaPlayer>
+#include <QAudioOutput>
 #include <QRandomGenerator>
 #include "Definition.h"
 
-QString getTime(){
+QString MainWindow::getTime()
+{
     return QString("[") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + QString("]");
 }
-QString convertString(GameSystem::Method method){
+
+QString MainWindow::convertString(GameSystem::Method method)
+{
     QString str;
     if(method.action == GameSystem::Method::ACTION::GETREADY)str += "GetReady";
     if(method.action == GameSystem::Method::ACTION::LOOK)    str += "Look";
@@ -25,15 +29,15 @@ QString convertString(GameSystem::Method method){
     return str;
 }
 
-
-void MainWindow::keyPressEvent(QKeyEvent * event){
+void MainWindow::keyPressEvent([[maybe_unused]] QKeyEvent *event)
+{
     //縦に比率を合わせる
-    if(event->key()==Qt::Key_F){
-        int left_margin=0,right_margin=0;
-        this->ui->centralWidget->layout()->getContentsMargins(&left_margin,nullptr,&right_margin,nullptr);
-        this->ui->Field->resize((static_cast<float>(this->ui->Field->size().height())/ui->Field->field.size.y())*ui->Field->field.size.x(),this->ui->Field->size().height());
-        this->resize(QSize(this->ui->Field->width() + left_margin + right_margin,this->size().height()));
-    }
+    // if(event->key()==Qt::Key_F){
+    //     int left_margin=0,right_margin=0;
+    //     this->ui->centralWidget->layout()->getContentsMargins(&left_margin,nullptr,&right_margin,nullptr);
+    //     this->ui->Field->resize((static_cast<float>(this->ui->Field->size().height())/ui->Field->field.size.y())*ui->Field->field.size.x(),this->ui->Field->size().height());
+    //     this->resize(QSize(this->ui->Field->width() + left_margin + right_margin,this->size().height()));
+    // }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -51,28 +55,28 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings* mSettings;
     QVariant v;
     mSettings = new QSettings( "setting.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v = mSettings->value( "LogFilepath" );
-    if (v.type() != QVariant::Invalid)path = v.toString();
+    if (v.typeId() != QMetaType::UnknownType)path = v.toString();
     v = mSettings->value( "Gamespeed" );
-    if (v.type() != QVariant::Invalid)FRAME_RATE = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)FRAME_RATE = v.toInt();
     v = mSettings->value( "Silent" );
-    if (v.type() != QVariant::Invalid)silent = v.toBool();
+    if (v.typeId() != QMetaType::UnknownType)silent = v.toBool();
     else silent = false;
 
     v = mSettings->value( "Team" );
-    if (v.type() != QVariant::Invalid)anime_team_time = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)anime_team_time = v.toInt();
 
     //デザイン設定を書き換え
     QSettings* dSettings;
     QVariant v2;
     dSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-    dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+    // dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v2 = dSettings->value( "Dark" );
-    if (v2.type() != QVariant::Invalid)dark = v2.toBool();
+    if (v.typeId() != QMetaType::UnknownType)dark = v2.toBool();
     else dark = false;
     v2 = dSettings->value( "Bot" );
-    if (v2.type() != QVariant::Invalid)isbotbattle = v2.toBool();
+    if (v.typeId() != QMetaType::UnknownType)isbotbattle = v2.toBool();
     else isbotbattle = false;
     if(dark == true)this->anime_map_time -= this->anime_blind_time;
 
@@ -91,9 +95,16 @@ MainWindow::MainWindow(QWidget *parent) :
         this->ui->Field  ->setMap(this->startup->map);
         this->ui->TimeBar->setMaximum(this->startup->map.turn);
         this->ui->TimeBar->setValue  (this->startup->map.turn);
-        this->ui->TurnLabel     ->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
-        this->ui->CoolNameLabel ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ? "Cool" : this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
-        this->ui->HotNameLabel  ->setText(this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ? "Hot"  : this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
+        this->ui->TurnLabel->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
+        this->ui->CoolNameLabel->setText(
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ?
+            "Cool" :
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
+
+	this->ui->HotNameLabel->setText(
+	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ?
+	    "Hot" :
+	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
 
         //ボット戦モードならば表記の変更
         if(this->isbotbattle){
@@ -107,6 +118,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }else{
         exit(0);
     }
+
+    //画面の最大高さをもとに、ウインドウの最大高さを決める
+    int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
+    //画面のサイズに合わせてリサイズ
+    resize(QSize(window_height+350, window_height));
 
     player = 0;
 
@@ -123,9 +139,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //消音モードじゃない かつ Musicフォルダに音楽が存在する ならBGMセット
     if(!silent && this->startup->music_text != "none"){
         bgm = new QMediaPlayer;
+        audio_output = new QAudioOutput;
+        bgm->setAudioOutput(audio_output);
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
-        bgm->setVolume(50);
+        bgm->setSource(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
+        audio_output->setVolume(50);
         bgm->play();
     }
 
@@ -139,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->Field->team_pos[i].setX(-1);
         ui->Field->team_pos[i].setY(-1);
     }
-    
+
     //アイテム数ラベルセット
     for(int i=0;i<startup->map.size.y();i++){
        for(int j=0;j<startup->map.size.x();j++){
@@ -149,20 +167,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ItemLeaveLabel->setText(QString::number(this->ui->Field->leave_items));
 
     v = mSettings->value( "Maximum" );
-    if (v.type() != QVariant::Invalid && v.toBool()){
+    if (v.typeId() != QMetaType::UnknownType && v.toBool()){
         setWindowState(Qt::WindowMaximized);
+
     }
 
 
     //AnimationTime読み込み
     mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     v = mSettings->value( "Map" );
-    if (v.type() != QVariant::Invalid)anime_map_time = v.toInt();
+    if (v.typeId() != QMetaType::UnknownType)anime_map_time = v.toInt();
     else{
 
         QSettings* mSettings;
         mSettings = new QSettings( "AnimationTime.ini", QSettings::IniFormat ); // iniファイルで設定を保存
-        mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
+        // mSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
 
         mSettings->setValue( "Map" , anime_map_time );
         mSettings->setValue( "Team", anime_team_time );
@@ -176,11 +195,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::SaveFile(){
+void MainWindow::SaveFile()
+{
     file->close();
 }
 
-void MainWindow::StepGame(){
+void MainWindow::StepGame()
+{
     //ゲーム進行
     static GameSystem::Method team_mehod[TEAM_COUNT];
     this->ui->Field->RefreshOverlay();
@@ -304,8 +325,8 @@ void MainWindow::StepGame(){
     getready_flag = !getready_flag;
 }
 
-void MainWindow::RefreshItem(GameSystem::Method method){
-
+void MainWindow::RefreshItem(GameSystem::Method method)
+{
     static int leave_item = 0;
     if(leave_item == 0)leave_item = this->ui->Field->leave_items;
     if(this->ui->Field->leave_items != leave_item){
@@ -327,7 +348,8 @@ void MainWindow::RefreshItem(GameSystem::Method method){
 }
 
 //終了処理
-void MainWindow::Finish(GameSystem::WINNER winner){
+void MainWindow::Finish(GameSystem::WINNER winner)
+{
     this->clock->stop();
     QString append_str = "";
     //disconnect
@@ -343,9 +365,11 @@ void MainWindow::Finish(GameSystem::WINNER winner){
 
     if(!silent){
         bgm = new QMediaPlayer;
+        audio_output = new QAudioOutput;
+        bgm->setAudioOutput(audio_output);
         connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setMedia(QUrl("qrc:/Sound/ji_023.wav"));
-        bgm->setVolume(50);
+        bgm->setSource(QUrl("qrc:/Sound/ji_023.wav"));
+        audio_output->setVolume(50);
         bgm->play();
     }
 
@@ -389,7 +413,9 @@ void MainWindow::Finish(GameSystem::WINNER winner){
     */
     //log.close();
 }
-GameSystem::WINNER MainWindow::Judge(){
+
+GameSystem::WINNER MainWindow::Judge()
+{
     bool team_lose[TEAM_COUNT];
 
     for(int i=0;i<TEAM_COUNT;i++)team_lose[i] = false;
@@ -455,8 +481,8 @@ GameSystem::WINNER MainWindow::Judge(){
     else return GameSystem::WINNER::CONTINUE;
 }
 
-
-void MainWindow::StartAnimation(){
+void MainWindow::StartAnimation()
+{
     static int timer = 1;
     static Field<GameSystem::MAP_OVERLAY> f(this->startup->map.size.y(),
                                             QVector<GameSystem::MAP_OVERLAY>(this->startup->map.size.x(),GameSystem::MAP_OVERLAY::ERASE));
@@ -532,8 +558,8 @@ void MainWindow::StartAnimation(){
     repaint();
 }
 
-
-void MainWindow::ShowTeamAnimation(){
+void MainWindow::ShowTeamAnimation()
+{
     static int team_count;
 
     ui->Field->team_pos[team_count] = this->startup->map.team_first_point[team_count];
@@ -558,7 +584,8 @@ void MainWindow::ShowTeamAnimation(){
     team_count++;
 }
 
-void MainWindow::BlindAnimation(){
+void MainWindow::BlindAnimation()
+{
     static int timer = 1;
     static int ANIMATION_SIZE = 1;
     static int ANIMATION_TYPE = QRandomGenerator::global()->generate() % ANIMATION_SIZE;

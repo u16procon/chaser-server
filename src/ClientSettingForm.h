@@ -2,6 +2,9 @@
 #define CLIENTSETTINGFORM_H
 
 #include <QGroupBox>
+#include <QProcess>
+#include <QFile>
+
 #include "TcpClient.h"
 #include "ComClient.h"
 #include "ManualClient.h"
@@ -34,6 +37,7 @@ signals:
     void Standby(ClientSettingForm* client,bool complate);//準備完了
 private:
     Ui::ClientSettingForm *ui;
+    QProcess *botProcess;
 };
 
 #endif // CLIENTSETTINGFORM_H

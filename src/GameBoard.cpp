@@ -3,8 +3,8 @@
 #include <QThread>
 #include <QtAlgorithms>
 
-#define MIN(x,y) ((x < y)? x : y)
-#define MAX(x,y) ((x > y)? x : y)
+// #define MIN(x,y) ((x < y)? x : y)
+// #define MAX(x,y) ((x > y)? x : y)
 
 void GameBoard::PickItem(GameSystem::Method method){
 
@@ -48,7 +48,7 @@ void GameBoard::resizeEvent(QResizeEvent *event){
 
     ReloadTexture(texture_dir_path);
 }
-void GameBoard::paintEvent(QPaintEvent *event){
+void GameBoard::paintEvent([[maybe_unused]] QPaintEvent *event){
 
     QPainter painter(this);
     painter.setRenderHints( painter.renderHints() | QPainter::Antialiasing );
@@ -233,7 +233,7 @@ void GameBoard::setMap(const GameSystem::Map& map){
 }
 
 
-void GameBoard::PlayAnimation(GameSystem::Method method){
+void GameBoard::PlayAnimation([[maybe_unused]] GameSystem::Method method){
     //アニメーション
 }
 
@@ -284,4 +284,3 @@ void GameBoard::ReloadTexture(QString tex_dir_path){
         if(!img.isNull())img = img.scaled(image_part.width(),image_part.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     }
 }
-
