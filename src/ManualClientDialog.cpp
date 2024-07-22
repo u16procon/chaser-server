@@ -60,10 +60,10 @@ ManualClientDialog::ManualClientDialog(QWidget *parent) :
     ui(new Ui::ManualClientDialog)
 {
     ui->setupUi(this);
-    connect(this->ui->UPButton   ,SIGNAL(clicked()),this,SLOT(UPButtonClicked()));
-    connect(this->ui->DOWNButton ,SIGNAL(clicked()),this,SLOT(DOWNButtonClicked()));
-    connect(this->ui->RIGHTButton,SIGNAL(clicked()),this,SLOT(RIGHTButtonClicked()));
-    connect(this->ui->LEFTButton ,SIGNAL(clicked()),this,SLOT(LEFTButtonClicked()));
+    connect(this->ui->UPButton,    &QPushButton::clicked, this, &ManualClientDialog::UPButtonClicked);
+	connect(this->ui->DOWNButton,  &QPushButton::clicked, this, &ManualClientDialog::DOWNButtonClicked);
+	connect(this->ui->RIGHTButton, &QPushButton::clicked, this, &ManualClientDialog::RIGHTButtonClicked);
+	connect(this->ui->LEFTButton,  &QPushButton::clicked, this, &ManualClientDialog::LEFTButtonClicked);
 }
 
 ManualClientDialog::~ManualClientDialog()
