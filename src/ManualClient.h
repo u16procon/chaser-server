@@ -15,7 +15,7 @@ public:
     GameSystem::Method WaitReturnMethod(GameSystem::AroundData data)override;
     bool WaitEndSharp(GameSystem::AroundData data)override;
 
-    void Startup();
+    void Startup() override;
 
     ManualClient(QWidget *parent=0);
     ~ManualClient();
