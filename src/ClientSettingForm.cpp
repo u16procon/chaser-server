@@ -56,7 +56,7 @@ void ClientSettingForm::DisConnected() {
     //再connectしクライアントの接続を待つ
     connect(this->client, &TCPClient::Connected,    this, &ClientSettingForm::Connected);
     connect(this->client, &TCPClient::Ready,        this, &ClientSettingForm::SetStandby);
-	connect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
+    connect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
 
     this->client->Startup();
 
