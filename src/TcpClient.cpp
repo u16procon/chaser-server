@@ -144,8 +144,8 @@ void TCPClient::NewConnection()
     delete this->client;
     this->client = this->server->nextPendingConnection();
     this->IP = this->client->peerAddress().toString();
-    connect(this->client, SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    connect(this->client, SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    connect(this->client, &QTcpSocket::readyRead,    this, &TCPClient::GetTeamName);
+	connect(this->client, &QTcpSocket::disconnected, this, &TCPClient::DisConnected);
     is_disconnected = false;
     emit Connected();
 }
@@ -161,8 +161,8 @@ void TCPClient::DisConnected()
     this->IP = "";
     this->Name = "";
     is_disconnected = true;
-    disconnect(this->client, SIGNAL(readyRead()), this, SLOT(GetTeamName()));
-    disconnect(this->client, SIGNAL(disconnected()), this, SLOT(DisConnected()));
+    connect(this->client, &QTcpSocket::readyRead,    this, &TCPClient::GetTeamName);
+    connect(this->client, &QTcpSocket::disconnected, this, &TCPClient::DisConnected);
     emit Disconnected();
 }
 
@@ -189,7 +189,8 @@ QString TCPClient::GetTeamName()
 
         this->Name = namebuf;
 
-        disconnect(this->client, SIGNAL(readyRead()), this, SLOT(GetTeamName()));
+        disconnect(this->client, &QTcpSocket::readyRead, this, &TCPClient::GetTeamName);
+
         emit WriteTeamName();
         emit Ready();
         return this->Name;
@@ -215,7 +216,7 @@ TCPClient::TCPClient(QObject *parent)
     //接続最大数を1に固定
     this->server->setMaxPendingConnections(1);
     //シグナルとスロットを接続
-    connect(this->server, SIGNAL(newConnection()), this, SLOT(NewConnection()));
+    connect(this->server, &QTcpServer::newConnection, this, &TCPClient::NewConnection);
 }
 
 TCPClient::~TCPClient()

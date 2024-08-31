@@ -17,8 +17,8 @@ GameSystem::Method ManualClient::WaitReturnMethod(GameSystem::AroundData data){
 
     //GUIレスポンス待ち
     QEventLoop eventLoop;
-    QDialog::connect(diag, SIGNAL(ReadyAction()), &eventLoop, SLOT(quit()));
-    QDialog::connect(this, SIGNAL(Disconnected()), &eventLoop, SLOT(quit()));
+    QDialog::connect(diag, &ManualClientDialog::ReadyAction, &eventLoop, &QEventLoop::quit);
+    QDialog::connect(this, &ManualClient::Disconnected, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();//GUIからのレスポンスがあるまで待機
     return diag->next_method;
 }
@@ -43,7 +43,7 @@ ManualClient::ManualClient(QWidget* parent):
     Name = "ManualClient";
     IP   = "ローカル";
     diag = new ManualClientDialog();
-    connect(diag,SIGNAL(CloseWindow()),this,SLOT(closeEvent()));
+    connect(diag, &ManualClientDialog::CloseWindow, this, &ManualClient::closeEvent);
 }
 
 ManualClient::~ManualClient()

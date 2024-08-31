@@ -48,7 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->startup = new StartupDialog();
     this->win = GameSystem::WINNER::CONTINUE;
 
+    //Functorベースでは動作しないため、Stringベースでconnect
     connect(this,SIGNAL(destroyed()),this,SLOT(SaveFile()));
+    //connect(this, &MainWindow::destroyed, this, &MainWindow::SaveFile);
 
     //ServerSetting読み込み
     QString path;
@@ -127,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     player = 0;
 
     startup_anime = new QTimer();
-    connect(startup_anime,SIGNAL(timeout()),this,SLOT(StartAnimation()));
+    connect(startup_anime, &QTimer::timeout, this, &MainWindow::StartAnimation);
     startup_anime->start(anime_map_time / (startup->map.size.x()*startup->map.size.y()));
 
     /*
@@ -141,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent) :
         bgm = new QMediaPlayer;
         audio_output = new QAudioOutput;
         bgm->setAudioOutput(audio_output);
-        connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+        //connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setSource(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
         audio_output->setVolume(50);
         bgm->play();
@@ -367,7 +369,7 @@ void MainWindow::Finish(GameSystem::WINNER winner)
         bgm = new QMediaPlayer;
         audio_output = new QAudioOutput;
         bgm->setAudioOutput(audio_output);
-        connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+        //connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setSource(QUrl("qrc:/Sound/ji_023.wav"));
         audio_output->setVolume(50);
         bgm->play();
@@ -550,9 +552,9 @@ void MainWindow::StartAnimation()
     }
     if(timer >= startup->map.size.x() * startup->map.size.y()){
         teamshow_anime = new QTimer();
-        connect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+        connect(teamshow_anime, &QTimer::timeout, this, &MainWindow::ShowTeamAnimation);
         teamshow_anime->start(anime_team_time/TEAM_COUNT);
-        disconnect(startup_anime,SIGNAL(timeout()),this,SLOT(StartAnimation()));
+        disconnect(startup_anime, &QTimer::timeout, this, &MainWindow::StartAnimation);
     }
     timer += 2;
     repaint();
@@ -567,14 +569,14 @@ void MainWindow::ShowTeamAnimation()
     if(team_count == TEAM_COUNT){
         if(dark == true){
             blind_anime = new QTimer();
-            connect(blind_anime,SIGNAL(timeout()),this,SLOT(BlindAnimation()));
+            connect(blind_anime, &QTimer::timeout, this, &MainWindow::BlindAnimation);
             blind_anime->start(anime_blind_time / (startup->map.size.x()*startup->map.size.y()));
-            disconnect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+			disconnect(teamshow_anime, &QTimer::timeout, this, &MainWindow::ShowTeamAnimation);
         }else{
             clock = new QTimer();
-            connect(clock,SIGNAL(timeout()),this,SLOT(StepGame()));
+			connect(clock, &QTimer::timeout, this, &MainWindow::StepGame);
             clock->start(FRAME_RATE);
-            disconnect(teamshow_anime,SIGNAL(timeout()),this,SLOT(ShowTeamAnimation()));
+			disconnect(teamshow_anime, &QTimer::timeout, this, &MainWindow::ShowTeamAnimation);
         }
     }else{
         ui->Field->field.discover[ui->Field->team_pos[team_count].y()]
@@ -609,9 +611,9 @@ void MainWindow::BlindAnimation()
         for(auto& v : this->ui->Field->field.discover)v = QVector<GameSystem::Discoverer>
                 (this->ui->Field->field.size.x(),GameSystem::Discoverer::Unknown);
         clock = new QTimer();
-        connect(clock,SIGNAL(timeout()),this,SLOT(StepGame()));
+        connect(clock, &QTimer::timeout, this, &MainWindow::StepGame);
         clock->start(FRAME_RATE);
-        disconnect(blind_anime,SIGNAL(timeout()),this,SLOT(BlindAnimation()));
+        disconnect(blind_anime, &QTimer::timeout, this,&MainWindow::BlindAnimation);
     }
     timer += 2;
     repaint();
