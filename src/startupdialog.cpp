@@ -27,14 +27,8 @@ StartupDialog::StartupDialog(QWidget *parent)
         team_standby[i] = false;
     }
 
-    connect(ui->CoolGroupBox,
-            SIGNAL(Standby(ClientSettingForm *, bool)),
-            this,
-            SLOT(ClientStandby(ClientSettingForm *, bool)));
-    connect(ui->HotGroupBox,
-            SIGNAL(Standby(ClientSettingForm *, bool)),
-            this,
-            SLOT(ClientStandby(ClientSettingForm *, bool)));
+    connect(ui->HotGroupBox,  &ClientSettingForm::Standby, this, &StartupDialog::ClientStandby);
+    connect(ui->CoolGroupBox, &ClientSettingForm::Standby, this, &StartupDialog::ClientStandby);
 
     //ローカルIPの探索
     foreach (const QHostAddress &address, QNetworkInterface::allAddresses()) {

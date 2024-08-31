@@ -7,9 +7,9 @@ ClientSettingForm::ClientSettingForm(QWidget *parent) :
 {
     ui->setupUi(this);
     this->client = new TCPClient();
-    connect(this->client ,SIGNAL(Connected())   ,this,SLOT(Connected()));
-    connect(this->client ,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
-    connect(this->client ,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
+    connect(this->client, &TCPClient::Connected,    this, &ClientSettingForm::Connected);
+    connect(this->client, &TCPClient::Ready,        this, &ClientSettingForm::SetStandby);
+    connect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
 
     //Windowsでボットのexeファイルがあるときのみ、ボットプログラムを動かせるように設定
     #ifdef Q_OS_WINDOWS
@@ -44,10 +44,21 @@ void ClientSettingForm::Connected()
     this->ui->ConnectButton->setText("　切断　");
 }
 
-void ClientSettingForm::DisConnected()
-{
+void ClientSettingForm::DisConnected() {
 
-    //this->client->Startup();
+    disconnect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
+    //TCP待機やめ
+    if (dynamic_cast<TCPClient*>(this->client) != nullptr) {
+        dynamic_cast<TCPClient*>(this->client)->CloseSocket();
+        this->client = new TCPClient(this);
+    }
+
+    //再connectしクライアントの接続を待つ
+    connect(this->client, &TCPClient::Connected,    this, &ClientSettingForm::Connected);
+    connect(this->client, &TCPClient::Ready,        this, &ClientSettingForm::SetStandby);
+    connect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
+
+    this->client->Startup();
 
     this->ui->ConnectButton->setText("接続開始");
     this->ui->StateLabel->setText("非接続");
@@ -56,11 +67,10 @@ void ClientSettingForm::DisConnected()
     this->ui->PortSpinBox->setEnabled(true);
 
     //状態解除
-    if(this->ui->ConnectButton->isChecked()){
+    if (this->ui->ConnectButton->isChecked())
         this->ui->ConnectButton->toggle();
-    }
 
-    emit Standby(this,false);
+    emit Standby(this, false);
 }
 
 void ClientSettingForm::ConnectionToggled(bool state)
@@ -123,9 +133,9 @@ void ClientSettingForm::ComboBoxChenged(QString text)
 
     emit Standby(this,false);
     //再connectしクライアントの接続を待つ
-    connect(this->client,SIGNAL(Connected())   ,this,SLOT(Connected()));
-    connect(this->client,SIGNAL(Ready())       ,this,SLOT(SetStandby()));
-    connect(this->client,SIGNAL(Disconnected()),this,SLOT(DisConnected()));
+    connect(this->client, &TCPClient::Connected,    this, &ClientSettingForm::Connected);
+    connect(this->client, &TCPClient::Ready,        this, &ClientSettingForm::SetStandby);
+    connect(this->client, &TCPClient::Disconnected, this, &ClientSettingForm::DisConnected);
     this->client->Startup();
 }
 

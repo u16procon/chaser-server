@@ -37,20 +37,16 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map, QWidget *parent) :
     //ブロック、アイテムの数をカウントして表示
     ReCount();
 
-    connect(
-        ui->listWidget,
-        SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-        this,
-        SLOT(SelectItem(QListWidgetItem*, QListWidgetItem*)));
 
-    connect(ui->TurnSpin, SIGNAL(valueChanged(int)), this, SLOT(SpinChanged(int)));
+    connect(ui->listWidget, &QListWidget::currentItemChanged, this, &MapEditerDialog::SelectItem);
+    connect(ui->TurnSpin, &QSpinBox::valueChanged, this, &MapEditerDialog::SpinChanged);
 
     ui->listWidget->setCurrentRow(0);
 
     ui->TurnSpin->setValue(ui->widget->field.turn);
 
     //ランダム生成ボタン
-    connect(ui->randomGenerateButton, SIGNAL(pressed()), this, SLOT(randomGenerateButtonPressed()));
+    connect(ui->randomGenerateButton, &QPushButton::pressed, this, &MapEditerDialog::randomGenerateButtonPressed);
 }
 
 MapEditerDialog::~MapEditerDialog()
