@@ -68,7 +68,7 @@ private slots:
     //アイテム取得の判定
     void RefreshItem(GameSystem::Method method);
     //決着判定
-    GameSystem::WINNER Judge();
+    GameSystem::WINNER Judge(int player);
     //決着
     void Finish(GameSystem::WINNER win);
 

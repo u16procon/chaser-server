@@ -240,7 +240,7 @@ void MainWindow::StepGame()
             team_mehod[player].team = static_cast<GameSystem::TEAM>(player);
         }
         //End
-        this->win = Judge();
+        this->win = Judge(player);
 
         if(win != GameSystem::WINNER::CONTINUE){
 
@@ -263,7 +263,7 @@ void MainWindow::StepGame()
         GameSystem::AroundData around = ui->Field->FieldAccessMethod(team_mehod[player]);
         //アイテムの回収
         RefreshItem(team_mehod[player]);
-        this->win = Judge();
+        this->win = Judge(player);
         if(this->win != GameSystem::WINNER::CONTINUE){
             around.connect = GameSystem::CONNECTING_STATUS::FINISHED;
         }
@@ -416,7 +416,7 @@ void MainWindow::Finish(GameSystem::WINNER winner)
     //log.close();
 }
 
-GameSystem::WINNER MainWindow::Judge()
+GameSystem::WINNER MainWindow::Judge(int player)
 {
     bool team_lose[TEAM_COUNT];
 
@@ -424,15 +424,18 @@ GameSystem::WINNER MainWindow::Judge()
     GameBoard*& board = this->ui->Field;
 
     for(int i=0;i<TEAM_COUNT;i++){
+        // 現在のplayer(COOL or HOT)
+        player = (player + 1) % TEAM_COUNT;
 
-        GameSystem::AroundData team_around = board->FieldAccessAround(static_cast<GameSystem::TEAM>(i));
+        GameSystem::AroundData team_around = board->FieldAccessAround(static_cast<GameSystem::TEAM>(player));
         //log << getTime() + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + ":" + team_around.toString() << "\r\n";
 
         //ブロック置かれ死
         if(team_around.data[4] == GameSystem::MAP_OBJECT::BLOCK){
-            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + "ブロック下敷き" << "\r\n";
+            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "ブロック下敷き" << "\r\n";
             team_around.finish();
-            team_lose[i]=true;
+            team_lose[player]=true;
+            break;
         }
 
         //ブロック囲まれ死
@@ -440,17 +443,20 @@ GameSystem::WINNER MainWindow::Judge()
            team_around.data[3] == GameSystem::MAP_OBJECT::BLOCK &&
            team_around.data[5] == GameSystem::MAP_OBJECT::BLOCK &&
            team_around.data[7] == GameSystem::MAP_OBJECT::BLOCK){
-            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + "ブロック囲まれ" << "\r\n";
+            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "ブロック囲まれ" << "\r\n";
             team_around.finish();
-            team_lose[i]=true;
+            team_lose[player]=true;
+            break;
         }
 
         //切断死
         if(startup->team_client[i]->client->is_disconnected){
-            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)) + "通信切断" << "\r\n";
+            log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(player)) + "通信切断" << "\r\n";
             team_around.finish();
-            team_lose[i]=true;
+            team_lose[player]=true;
+            break;
         }
+
     }
 
     //相打ち、または時間切れ時はアイテム判定とする
