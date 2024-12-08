@@ -450,7 +450,7 @@ GameSystem::WINNER MainWindow::Judge()
         }
 
         //切断死
-        if(startup->team_client[i]->client->is_disconnected){
+        if(startup->team_client[_player]->client->is_disconnected){
             log << getTime() + "[死因]" + GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(_player)) + "通信切断" << "\r\n";
             team_around.finish();
             team_lose[_player]=true;
