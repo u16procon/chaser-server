@@ -52,6 +52,32 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(destroyed()),this,SLOT(SaveFile()));
     //connect(this, &MainWindow::destroyed, this, &MainWindow::SaveFile);
 
+    //スタートアップダイアログ開始
+    if(this->startup->exec()){
+        //マップ初期化
+        for(int i=0;i<TEAM_COUNT;i++){
+            this->ui->Field->team_pos[i] = this->startup->map.team_first_point[i];
+            qDebug() << this->ui->Field->team_pos[i];
+        }
+        //ui初期化
+        this->ui->Field  ->setMap(this->startup->map);
+        this->ui->TimeBar->setMaximum(this->startup->map.turn);
+        this->ui->TimeBar->setValue  (this->startup->map.turn);
+        this->ui->TurnLabel->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
+        this->ui->CoolNameLabel->setText(
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ?
+                "Cool" :
+                this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
+
+        this->ui->HotNameLabel->setText(
+            this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ?
+                "Hot" :
+                this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
+
+    }else{
+        exit(0);
+    }
+
     //ServerSetting読み込み
     QString path;
     QSettings* mSettings;
@@ -75,51 +101,25 @@ MainWindow::MainWindow(QWidget *parent) :
     dSettings = new QSettings( "design.ini", QSettings::IniFormat ); // iniファイルで設定を保存
     // dSettings->setIniCodec( "UTF-8" ); // iniファイルの文字コード
     v2 = dSettings->value( "Dark" );
-    if (v.typeId() != QMetaType::UnknownType)dark = v2.toBool();
+    if (v2.typeId() != QMetaType::UnknownType)dark = v2.toBool();
     else dark = false;
     v2 = dSettings->value( "Bot" );
-    if (v.typeId() != QMetaType::UnknownType)isbotbattle = v2.toBool();
+    if (v2.typeId() != QMetaType::UnknownType)isbotbattle = v2.toBool();
     else isbotbattle = false;
     if(dark == true)this->anime_map_time -= this->anime_blind_time;
+
+    //ボット戦モードならば表記の変更
+    if(this->isbotbattle){
+        this->ui->HotScoreLabel ->setText(QString::number(this->startup->map.turn) + "(ITEM:0)");
+        this->ui->CoolScoreLabel->setText(QString::number(this->startup->map.turn) + "(ITEM:0)");
+    }else{
+        this->ui->HotScoreLabel ->setText("0");
+        this->ui->CoolScoreLabel->setText("0");
+    }
 
     //ログファイルオープン
     if(path == "")path = ".";
     log = StableLog(path + "/log" + getTime() + ".txt");
-
-    //スタートアップダイアログ開始
-    if(this->startup->exec()){
-        //マップ初期化
-        for(int i=0;i<TEAM_COUNT;i++){
-            this->ui->Field->team_pos[i] = this->startup->map.team_first_point[i];
-            qDebug() << this->ui->Field->team_pos[i];
-        }
-        //ui初期化
-        this->ui->Field  ->setMap(this->startup->map);
-        this->ui->TimeBar->setMaximum(this->startup->map.turn);
-        this->ui->TimeBar->setValue  (this->startup->map.turn);
-        this->ui->TurnLabel->setText("残りターン : " + QString::number(this->ui->TimeBar->value()));
-        this->ui->CoolNameLabel->setText(
-            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name == "" ?
-            "Cool" :
-            this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name);
-
-	this->ui->HotNameLabel->setText(
-	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name == "" ?
-	    "Hot" :
-	    this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT )]->client->Name);
-
-        //ボット戦モードならば表記の変更
-        if(this->isbotbattle){
-            this->ui->HotScoreLabel ->setText(QString::number(this->startup->map.turn) + "(ITEM:0)");
-            this->ui->CoolScoreLabel->setText(QString::number(this->startup->map.turn) + "(ITEM:0)");
-        }else{
-            this->ui->HotScoreLabel ->setText("0");
-            this->ui->CoolScoreLabel->setText("0");
-        }
-
-    }else{
-        exit(0);
-    }
 
     //画面の最大高さをもとに、ウインドウの最大高さを決める
     int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
