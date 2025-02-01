@@ -1,6 +1,8 @@
 #include "TcpClient.h"
 #include <QSettings>
 #include <QRegularExpression>
+#include <QFont>
+#include <QFontMetrics>
 
 QString TCPClient::VisibilityString(QString str)
 {
@@ -187,7 +189,29 @@ QString TCPClient::GetTeamName()
         static const auto REX = QRegularExpression("[\a\b\f\n\r\t\v]");
         namebuf = namebuf.replace(REX, "");
 
-        this->Name = namebuf;
+        QFontMetrics fm(QFont("Yu Gothic UI", 20));
+        QString clientName = "", lineText = "";
+        bool insertNewLineFlag = false;
+
+        for(int i = 0; i < namebuf.length(); i++){
+
+            //文字幅を計算して、ある程度以上の幅の文字列の表示をしない/改行して分割する
+            //(LIMIT_NAME_PIXEL_SIZE以上なら2行に分割)
+            if(fm.horizontalAdvance(lineText + namebuf[i]) < LIMIT_NAME_PIXEL_SIZE){
+                clientName += namebuf[i];
+                lineText += namebuf[i];
+            } else if (!insertNewLineFlag){
+                insertNewLineFlag = true;
+                clientName += "\n";
+                clientName += namebuf[i];
+                lineText = namebuf[i];
+            } else { //1回改行が入ったあとは、2行目まで表示する(3行目以降は無視)
+                break;
+            }
+
+        }
+
+        this->Name = clientName;
 
         disconnect(this->client, &QTcpSocket::readyRead, this, &TCPClient::GetTeamName);
 
