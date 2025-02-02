@@ -31,9 +31,9 @@
 * **通信タイムアウト時間** TCPクライアントにおけるレスポンスの待ち時間です。長ければ長いほどクライアントがタイムアウトしにくくなります。
 
 ## 開発環境(Qt6)
-- Windows 11 23H2
-- Qt Creator 14.0.2
-- Desktop Qt 6.8.0 MinGW 64-bit
+- Windows 11 24H2
+- Qt Creator 15.0.1
+- Desktop Qt 6.8.2 MinGW 64-bit
 
 ## 開発環境(Qt5)
 - MacOSX 10.11.3 ElCapitan
