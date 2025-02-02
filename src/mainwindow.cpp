@@ -239,6 +239,8 @@ void MainWindow::StepGame()
             }
             team_mehod[player].team = static_cast<GameSystem::TEAM>(player);
         }
+        //アイテムの回収
+        RefreshItem(team_mehod[player]);
         //End
         this->win = Judge();
 
