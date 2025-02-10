@@ -14,6 +14,7 @@ class TCPClient : public BaseClient
 private:
     int TIMEOUT = 5000;   //タイムアウト
     const static int IGNORE_INVALD = 10;   //無効ライン無視回数
+    const static int LIMIT_NAME_PIXEL_SIZE = 250;  //クライアント名1行分の最大ピクセルサイズ
 
     const QString NEWLINE_CODE = "";
 
