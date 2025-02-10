@@ -45,5 +45,5 @@ void DesignDialog::Export(){
 
     mSettings->setValue( "Dark"    , GetCheckDark());
     mSettings->setValue( "Bot"     , GetCheckBot());
-    QMessageBox::information(this, tr("警告"), tr("設定は再起動後有効になります。"));
+    //QMessageBox::information(this, tr("警告"), tr("設定は再起動後有効になります。"));
 }
