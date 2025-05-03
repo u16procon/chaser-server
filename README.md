@@ -6,7 +6,7 @@
 ルールや通信仕様の詳細は公式サイトや同梱のdocファイル等を参照してください。
 
 このサーバーはC++とクロスプラットフォームライブラリQtによって開発されています。
-現在のサーバーではドキュメント通りの通信仕様であるため、過去に旭川プロコンに使用されたライブラリ・クライアントと互換性を持ちます。
+現在のサーバーではドキュメント通りの通信仕様であるため、過去に旭川プロコンで使用されたライブラリ・クライアントと互換性を持ちます。
 
 <div align="center">
   <img src="doc/Screenshot3.png" width=800>
@@ -19,7 +19,7 @@
 
 * **TCPユーザー** 通常のクライアントです。クライアントとなるPCのAIにより動作します。
 * **自動くん** 特に何もしないモードです。デバッグにどうぞ。
-* **ManualClient** 別ウインドウでコントローラが開かれ、ユーザー直接を操作できます。
+* **ManualClient** 別ウインドウでコントローラが開かれ、ユーザーが直接操作できます。
 * **botV4** [2020年版のボットプログラム](https://www.procon-asahikawa.org/files/U16asahikawaBot.zip)が動作します。
   ただし、OSはWindows限定で ./2019-U16asahikawaBot/u16asahikawaBot.exe がある場合のみ起動可能です。
 
@@ -56,8 +56,8 @@ Imageフォルダがない場合は新規作成してください。
 
 ## 開発環境(Qt6)
 - Windows 11 24H2
-- Qt Creator 15.0.1
-- Desktop Qt 6.8.2 MinGW 64-bit
+- Qt Creator 16.0.1
+- Desktop Qt 6.8.3 MinGW 64-bit
 
 ## 開発環境(Qt5)
 - MacOSX 10.11.3 ElCapitan
