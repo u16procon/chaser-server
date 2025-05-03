@@ -23,6 +23,30 @@
 * **botV4** [2020年版のボットプログラム](https://www.procon-asahikawa.org/files/U16asahikawaBot.zip)が動作します。
   ただし、OSはWindows限定で ./2019-U16asahikawaBot/u16asahikawaBot.exe がある場合のみ起動可能です。
 
+## テクスチャ設定
+下記のように画像ファイルを配置することで、テクスチャを変更することが可能です。
+Imageフォルダがない場合は新規作成してください。
+また、画像ファイルはPNG形式である必要があります。
+
+<pre>
+.
+├── AsahikawaProcon-Server.exe
+├── (botV4)
+├── (各種dll)
+├── (各種設定ファイル)
+└── Image
+    └── テクスチャ表示名
+       ├── Blind.png
+       ├── Block.png
+       ├── Cool.png
+       ├── Floor.png
+       ├── Getready.png
+       ├── Hot.png
+       ├── Item.png
+       ├── Look.png
+       └── Search.png
+</pre>
+
 ## サーバー設定
 サーバーの動作設定ができます。また、**設定は再起動後有効になります。**
 
