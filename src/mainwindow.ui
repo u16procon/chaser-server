@@ -235,6 +235,9 @@
            <property name="text">
             <string>NONAME</string>
            </property>
+           <property name="textFormat">
+            <enum>Qt::TextFormat::PlainText</enum>
+           </property>
            <property name="scaledContents">
             <bool>false</bool>
            </property>
@@ -354,6 +357,9 @@
            </property>
            <property name="text">
             <string>NONAME</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::TextFormat::PlainText</enum>
            </property>
           </widget>
          </item>
