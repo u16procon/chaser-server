@@ -34,7 +34,7 @@
     <item>
      <widget class="Line" name="line">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
      </widget>
     </item>
@@ -55,10 +55,10 @@
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Shape::StyledPanel</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Shadow::Raised</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <property name="leftMargin">
@@ -90,7 +90,7 @@
               </sizepolicy>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -108,8 +108,10 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="styleSheet">
-              <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+             <property name="font">
+              <font>
+               <pointsize>20</pointsize>
+              </font>
              </property>
              <property name="text">
               <string>残りターン数：100</string>
@@ -125,7 +127,7 @@
               </sizepolicy>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -161,7 +163,7 @@
            <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -175,15 +177,8 @@
             <widget class="QLabel" name="WinnerLabel">
              <property name="font">
               <font>
-               <family>.SF NS Text</family>
                <pointsize>28</pointsize>
-               <weight>50</weight>
-               <italic>false</italic>
-               <bold>false</bold>
               </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">font: 28pt &quot;.SF NS Text&quot;;</string>
              </property>
              <property name="text">
               <string/>
@@ -193,7 +188,7 @@
            <item>
             <spacer name="horizontalSpacer_4">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -229,8 +224,10 @@
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="1">
           <widget class="QLabel" name="CoolNameLabel">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>NONAME</string>
@@ -245,8 +242,10 @@
          </item>
          <item row="1" column="1">
           <widget class="QLabel" name="CoolScoreLabel">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>0</string>
@@ -255,34 +254,38 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_3">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>SCORE：</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>NAME：</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item row="0" column="2" rowspan="2">
           <spacer name="horizontalSpacer_6">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -316,34 +319,40 @@
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="1" column="0">
           <widget class="QLabel" name="label_8">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>SCORE：</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>NAME：</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
           <widget class="QLabel" name="HotScoreLabel">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>0</string>
@@ -352,8 +361,10 @@
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="HotNameLabel">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>NONAME</string>
@@ -366,7 +377,7 @@
          <item row="0" column="2" rowspan="2">
           <spacer name="horizontalSpacer_7">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -399,8 +410,10 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QLabel" name="label">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>残りアイテム数：</string>
@@ -409,8 +422,10 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="ItemLeaveLabel">
-           <property name="styleSheet">
-            <string notr="true">font: 20pt &quot;.SF NS Text&quot;;</string>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>0</string>
@@ -420,7 +435,7 @@
          <item row="0" column="3">
           <spacer name="horizontalSpacer_5">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -436,7 +451,7 @@
       <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
