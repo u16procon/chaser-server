@@ -2,7 +2,7 @@
 #include <QSettings>
 #include <QRegularExpression>
 #include <QFont>
-#include <QFontMetrics>
+#include <QLabel>
 
 QString TCPClient::VisibilityString(QString str)
 {
@@ -185,19 +185,27 @@ QString TCPClient::GetTeamName()
             }
         }
 
-        //名前のエスケープ処理(改行やタブなどの文字を削除)
+        //名前のエスケープ処理(改行やタブなどの文字の効果を削除)
         static const auto REX = QRegularExpression("[\a\b\f\n\r\t\v]");
         namebuf = namebuf.replace(REX, "");
 
-        QFontMetrics fm(QFont("Yu Gothic UI", 20));
+        QLabel nameLabel;
+
+        //HTMLタグは解釈しない
+        nameLabel.setTextFormat(Qt::PlainText);
+        nameLabel.setFont(QFont("Yu Gothic UI", 20));
+
         QString clientName = "", lineText = "";
         bool insertNewLineFlag = false;
 
         for(int i = 0; i < namebuf.length(); i++){
 
+            nameLabel.setText(lineText + namebuf[i]);
+            nameLabel.adjustSize();
+
             //文字幅を計算して、ある程度以上の幅の文字列の表示をしない/改行して分割する
             //(LIMIT_NAME_PIXEL_SIZE以上なら2行に分割)
-            if(fm.horizontalAdvance(lineText + namebuf[i]) < LIMIT_NAME_PIXEL_SIZE){
+            if(nameLabel.size().width() < LIMIT_NAME_PIXEL_SIZE){
                 clientName += namebuf[i];
                 lineText += namebuf[i];
             } else if (!insertNewLineFlag){
