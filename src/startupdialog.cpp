@@ -41,6 +41,18 @@ StartupDialog::StartupDialog(QWidget *parent)
 
     map.CreateRandomMap();
     map_standby = true;
+
+    //コマンドライン引数で指定されたマップの読み込み
+    QStringList argv = QCoreApplication::arguments();
+
+    if(argv.size() > 1){
+        if(QFile::exists(argv[1])){
+            SetMapStandby(MapRead(argv[1]));
+            this->ui->MapDirEdit->setText(argv[1]);
+        } else {
+            QMessageBox::information(this, tr("警告"), tr("コマンドライン引数で指定されたマップファイルが存在しません。\nランダムマップが使用されます。"));
+        }
+    }
 }
 
 StartupDialog::~StartupDialog()
@@ -128,8 +140,11 @@ void StartupDialog::PushedMapSelect()
     QString filter = tr("マップファイル (*.map)");
 
     QString filePath = QFileDialog::getOpenFileName(this, cap, folder, filter);
-    this->ui->MapDirEdit->setText(filePath);
-    SetMapStandby(MapRead(filePath));
+
+    if(filePath != ""){
+        this->ui->MapDirEdit->setText(filePath);
+        SetMapStandby(MapRead(filePath));
+    }
 }
 
 void StartupDialog::ClientStandby(ClientSettingForm *client, bool complate)

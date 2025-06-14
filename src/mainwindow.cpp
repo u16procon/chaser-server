@@ -194,7 +194,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    auto ret = QMessageBox::information(this, "", tr("続けてサーバーを起動しますか。"), QMessageBox::Yes, QMessageBox::No);
+
     delete ui;
+
+    if(ret == QMessageBox::Yes){
+        QStringList argv = QApplication::arguments();
+
+        //サーバーのファイルパスを取得
+        QString command = argv.takeAt(0);
+
+        // MainWindowを閉じた後に、
+        //コマンドライン引数付きでもう一度サーバーを起動する
+        QProcess::startDetached(command, argv);
+    }
+
 }
 
 void MainWindow::SaveFile()
