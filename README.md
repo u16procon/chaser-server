@@ -14,6 +14,14 @@
   <img src="doc/Screenshot2.png" width=600>
 </div>
 
+## サーバの起動方法
+`AsahikawaProcon-Server.exe` を実行するとサーバの起動できます。
+
+コマンドラインから実行する場合は、以下のようにマップファイルを指定した起動が可能です。マップファイルは相対パス、絶対パスが利用できます。大会等で同じマップで何度も対戦する場合にご利用ください。
+
+- 相対パスの場合: `AsahikawaProcon-Server.exe ./Map/test.map`
+- 絶対パスの場合: `AsahikawaProcon-Server.exe C:/Map/test.map`
+
 ## クライアント
 このサーバーは通常TCPで接続するクライントを、別の特殊なクライアントで代用することが可能です。
 
