@@ -149,6 +149,9 @@ void TCPClient::NewConnection()
     connect(this->client, &QTcpSocket::readyRead,    this, &TCPClient::GetTeamName);
 	connect(this->client, &QTcpSocket::disconnected, this, &TCPClient::DisConnected);
     is_disconnected = false;
+
+    //クライアントが1度接続された後は、接続を受け付けない
+    this->server->close();
     emit Connected();
 }
 
