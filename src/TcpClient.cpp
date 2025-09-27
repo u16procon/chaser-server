@@ -174,26 +174,22 @@ void TCPClient::DisConnected()
 QString TCPClient::GetTeamName()
 {
     if (this->Name == "") {
-        //Qstring::fromLocal8bitで文字化け対策しています
-        //this->Name = QString::fromLocal8Bit(client->readAll());
         QByteArray bytebuf = client->readAll();
-        QString namebuf = bytebuf;
 
-        //ここで0xFFFD(utfへの自動変換の失敗)が観測された場合、変換を行う
-        for (int i = 0; i < namebuf.size(); i++) {
-            QChar buffer = namebuf.at(i);
-            //不明な文字が発見された場合、文字コードをUTFに変換 (0xFFFD)
-            if (buffer == QChar::ReplacementCharacter) {
-                namebuf = QString::fromLocal8Bit(bytebuf);
-            }
-        }
+        //不明な文字が発見された場合、文字コードをUTFに変換 (0xFFFD)
+        QString namebuf = QString::fromUtf8(bytebuf);
 
         //名前のエスケープ処理(改行やタブなどの文字の効果を削除)
-        static const auto REX = QRegularExpression("[\a\b\f\n\r\t\v]");
+        static auto REX = QRegularExpression(
+            "["
+             "\r\n\u2028\u2029\u202A\u202B\u202C\u202D\u202E\u202F" //改行
+             "\u200B" //ゼロ幅スペース
+             "\a\b\f\t\v\uFFFD" //その他
+             "]"
+            );
         namebuf = namebuf.replace(REX, "");
 
         QLabel nameLabel;
-
         //HTMLタグは解釈しない
         nameLabel.setTextFormat(Qt::PlainText);
         nameLabel.setFont(QFont("Yu Gothic UI", 20));
@@ -203,19 +199,34 @@ QString TCPClient::GetTeamName()
 
         for(int i = 0; i < namebuf.length(); i++){
 
-            nameLabel.setText(lineText + namebuf[i]);
+            QString nextChar = namebuf[i];
+            nameLabel.setText(lineText + nextChar);
+
+            //サロゲート文字の場合は、次のQCharも連結する
+            if(namebuf[i].isHighSurrogate()){
+                i++;
+                nextChar += namebuf[i];
+                nameLabel.setText(lineText + nextChar);
+            }
+            //次の文字が字形選択子で絵文字用の異体字セレクタの場合は、次のQCharも連結する
+            else if(i + 1 < namebuf.length() && (namebuf[i + 1] == "\uFE0E" || namebuf[i + 1] == "\uFE0F")){
+                i++;
+                nextChar += namebuf[i];
+                nameLabel.setText(lineText + nextChar);
+            }
+
             nameLabel.adjustSize();
 
             //文字幅を計算して、ある程度以上の幅の文字列の表示をしない/改行して分割する
             //(LIMIT_NAME_PIXEL_SIZE以上なら2行に分割)
             if(nameLabel.size().width() < LIMIT_NAME_PIXEL_SIZE){
-                clientName += namebuf[i];
-                lineText += namebuf[i];
+                clientName += nextChar;
+                lineText += nextChar;
             } else if (!insertNewLineFlag){
                 insertNewLineFlag = true;
                 clientName += "\n";
-                clientName += namebuf[i];
-                lineText = namebuf[i];
+                clientName += nextChar;
+                lineText = nextChar;
             } else { //1回改行が入ったあとは、2行目まで表示する(3行目以降は無視)
                 break;
             }
