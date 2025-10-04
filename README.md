@@ -64,8 +64,8 @@ Imageフォルダがない場合は新規作成してください。
 
 ## 開発環境(Qt6)
 - Windows 11 24H2
-- Qt Creator 16.0.1
-- Desktop Qt 6.8.3 MinGW 64-bit
+- Qt Creator 17.0.2
+- Desktop Qt 6.9.3 MinGW 64-bit
 
 ## 開発環境(Qt5)
 - MacOSX 10.11.3 ElCapitan
