@@ -27,7 +27,7 @@ ClientSettingForm::~ClientSettingForm()
 
 void ClientSettingForm::SetStandby()
 {
-    this->ui->NameLabel ->setText(this->client->Name == "" ? "Hot" : this->client->Name);
+    this->ui->NameLabel ->setText(this->client->Name == "" ? "未設定" : this->client->Name);
     this->ui->IPLabel   ->setText(this->client->IP);
     this->ui->StateLabel->setText("準備完了");
     //if(this->ui->ComboBox->currentText() != "TCPユーザー");
