@@ -139,13 +139,15 @@ MainWindow::MainWindow(QWidget *parent) :
     */
 
     //消音モードじゃない かつ Musicフォルダに音楽が存在する ならBGMセット
+    bgm = new QMediaPlayer;
+    audio_output = new QAudioOutput;
+
     if(!silent && this->startup->music_text != "none"){
-        bgm = new QMediaPlayer;
-        audio_output = new QAudioOutput;
         bgm->setAudioOutput(audio_output);
         //connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setSource(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
         audio_output->setVolume(50);
+        bgm->setLoops(QMediaPlayer::Infinite);
         bgm->play();
     }
 
@@ -194,6 +196,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if(!silent)bgm->stop();
+
     auto ret = QMessageBox::information(this, "", tr("続けてサーバーを起動しますか。"), QMessageBox::Yes, QMessageBox::No);
 
     delete ui;
@@ -259,6 +263,7 @@ void MainWindow::StepGame()
         this->win = Judge();
 
         if(win != GameSystem::WINNER::CONTINUE){
+            if(!silent)bgm->stop();
 
             player++;
             player %= TEAM_COUNT;
