@@ -31,8 +31,8 @@ private:
     QTimer* teamshow_anime; //チーム表示アニメーション
     QTimer* blind_anime;    //まっくらアニメーション
     StartupDialog* startup; //スタートアップダイアログ
-    QMediaPlayer *bgm;           //音楽
-    QAudioOutput *audio_output; //音声出力
+    QMediaPlayer* bgm;           //音楽
+    QAudioOutput* audio_output; //音声出力
 
     bool silent;
 
@@ -44,11 +44,21 @@ private:
     int anime_map_time   = 6000; //マップ構築アニメーション時間
     int anime_team_time  = 2000; //チーム配置アニメーション時間
     int anime_blind_time = 1000; //まっくらアニメーション時間
+	float audio_volume = 0.8f; //音量
 
     GameSystem::WINNER win;
 
     static QString getTime();
     static QString convertString(GameSystem::Method method);
+
+    // qInstallMessageHandler 用
+    static MainWindow* s_instance;
+
+	// 前のメッセージハンドラを保存するための変数
+    static QtMessageHandler s_prevMsgHandler;
+
+	// メッセージハンドラ(ファイルへのログの書き出しを追加)
+    static void s_messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
 protected:
     void keyPressEvent(QKeyEvent* event);

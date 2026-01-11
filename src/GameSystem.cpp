@@ -102,37 +102,46 @@ bool GameSystem::Map::Import(QString Filename){
 bool GameSystem::Map::Export(QString Filename){
     QFile file(Filename);
 
-    if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(nullptr, "ファイルを開けません",file.errorString());
-        return false;
-    }else{
-        //Map出力
-        QString outname(Filename.split("/").last().remove(".map"));
-        QTextStream stream( &file );
-        stream << "N:" << outname << "\n";
-        stream << "T:" << QString::number(this->turn) << "\n";
-        stream << "S:" << QString::number(size.x()) << "," << QString::number(size.y()) << "\n";
-        for(auto v1 : field){
-            stream << "D:";
-            for(auto it = v1.begin();it != v1.end();it++){
-                stream << QString::number(static_cast<int>(*it));
-                if(it != v1.end()-1)stream << ",";
-            }
-            stream << "\n";
+	//拡張子取得
+    QString fileExt = Filename.split("/").last().split(".").last();
+
+    //Log出力時は追記モードでファイルを開く
+    if (fileExt == "txt") {
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
+    } else {
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(nullptr, "ファイルを開けません", file.errorString());
+            return false;
         }
-        for(int i=0;i<TEAM_COUNT;i++){
-            stream << GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i))[0]
-                    << ":"
-                    << QString::number(team_first_point[i] .x())
-                    << ","
-                    << QString::number(team_first_point[i] .y());
-            //if(i == TEAM_COUNT-1)
-            stream << "\n";
-        }
-        file.close();
-        return true;
     }
 
+    //Map出力
+    QString outname(Filename.split("/").last().remove(".map"));
+    QTextStream stream( &file );
+
+    stream << "N:" + outname << "\n";
+    stream << "T:" + QString::number(this->turn) + "\n";
+    stream << "S:" + QString::number(size.x()) + "," + QString::number(size.y()) + "\n";
+    for(auto v1 : field){
+        stream << "D:";
+        for(auto it = v1.begin();it != v1.end();it++){
+            stream << QString::number(static_cast<int>(*it));
+            if(it != v1.end()-1)stream << ",";
+        }
+        stream << "\n";
+    }
+    for(int i=0;i<TEAM_COUNT;i++){
+        stream << QString(GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i))[0])
+                + ":"
+                + QString::number(team_first_point[i] .x())
+                + ","
+                + QString::number(team_first_point[i] .y());
+        //if(i == TEAM_COUNT-1)
+        stream << "\n";
+    }
+
+    file.close();
+    return true;
 }
 
 //大会ルール(https://www.procon-asahikawa.org/files/U16Procon-RuleBookV231.pdf)

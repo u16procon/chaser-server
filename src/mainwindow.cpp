@@ -7,6 +7,10 @@
 #include <QRandomGenerator>
 #include "Definition.h"
 
+// staticメンバ変数 初期化
+MainWindow* MainWindow::s_instance = nullptr;
+QtMessageHandler MainWindow::s_prevMsgHandler = nullptr;
+
 QString MainWindow::getTime()
 {
     return QString("[") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + QString("]");
@@ -121,6 +125,10 @@ MainWindow::MainWindow(QWidget *parent) :
     if(path == "")path = ".";
     log = StableLog(path + "/log" + getTime() + ".txt");
 
+    //イベントハンドラ設定
+	s_instance = this;
+	s_prevMsgHandler = qInstallMessageHandler(MainWindow::s_messageHandler);
+
     //画面の最大高さをもとに、ウインドウの最大高さを決める
     int window_height = static_cast<int>(QGuiApplication::primaryScreen()->size().height()*0.8);
     //画面のサイズに合わせてリサイズ
@@ -132,30 +140,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(startup_anime, &QTimer::timeout, this, &MainWindow::StartAnimation);
     startup_anime->start(anime_map_time / (startup->map.size.x()*startup->map.size.y()));
 
-    /*
-    music = new QSound(MUSIC_DIRECTORY + "/Music/" + this->startup->music_text + ".wav");
-
-    if(!silent)music->play();
-    */
-
     //消音モードじゃない かつ Musicフォルダに音楽が存在する ならBGMセット
     bgm = new QMediaPlayer;
     audio_output = new QAudioOutput;
 
-    if(!silent && this->startup->music_text != "none"){
+    if(!silent && this->startup->music_text != "None"){
         bgm->setAudioOutput(audio_output);
-        //connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
         bgm->setSource(QUrl::fromLocalFile("./Music/" + this->startup->music_text));
-        audio_output->setVolume(50);
+        audio_output->setVolume(audio_volume);
         bgm->setLoops(QMediaPlayer::Infinite);
         bgm->play();
     }
 
-    //log << "[ Music : " + MUSIC_DIRECTORY + "/Music/" + this->startup->music_text + ".wav ]" + "\r\n";
     log << "[ Music : " + this->startup->music_text + " ]" + "\r\n";
-
-
-    //log << MUSIC_DIRECTORY + "/Music/" + this->startup->music_text + ".wav";
 
     for(int i=0;i<TEAM_COUNT;i++){
         ui->Field->team_pos[i].setX(-1);
@@ -166,7 +163,7 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int i=0;i<startup->map.size.y();i++){
        for(int j=0;j<startup->map.size.x();j++){
             if(startup->map.field[i][j] == GameSystem::MAP_OBJECT::ITEM)this->ui->Field->leave_items++;
-       }
+        }
     }
     ui->ItemLeaveLabel->setText(QString::number(this->ui->Field->leave_items));
 
@@ -191,17 +188,82 @@ MainWindow::MainWindow(QWidget *parent) :
         mSettings->setValue( "Team", anime_team_time );
 
     }
-    log << getTime() + "セットアップ完了　ゲームを開始します。\r\n";
+
+    //ログにプレイヤー情報出力(プレイヤー名、IPアドレス)
+    log << "[ Cool Player : Name = " + this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->Name
+        + " , IP = " + this->startup->team_client[static_cast<int>(GameSystem::TEAM::COOL)]->client->IP
+        + " ]\r\n";
+    log << "[ Hot  Player : Name = " + this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT)]->client->Name
+        + " , IP = " + this->startup->team_client[static_cast<int>(GameSystem::TEAM::HOT)]->client->IP
+        + " ]\r\n";
+
+    //ログにマップ情報出力
+    log << "[ Map : \r\n";
+    ui->Field->field.Export(log.filename());
+    log << "]\r\n";
+
+    log << getTime() + "セットアップ完了　ゲームを開始します。\r\n";    
+}
+
+void MainWindow::s_messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+    // 再入検出（同スレッド内での再帰呼び出しを防ぐ）
+    static thread_local bool inHandler = false;
+    if (inHandler) {
+        // 既にハンドラ内なら前のハンドラだけ呼ぶ（再帰で無限ループするのを防ぐ）
+        if (s_prevMsgHandler) s_prevMsgHandler(type, context, msg);
+        return;
+    }
+
+    inHandler = true;
+
+    // ログファイルへの書き込み
+    if (s_instance) {
+        // Warning、Critical、Fatalのメッセージのみログに出力(Debug、Infoの情報は書き込まない)
+        switch (type) {
+        case QtWarningMsg:
+            s_instance->log << getTime() + "Warning : " + msg + "\r\n";
+            break;
+        case QtCriticalMsg:
+            s_instance->log << getTime() + "Critical Error : " + msg + "\r\n";
+            break;
+        case QtFatalMsg:
+            s_instance->log << getTime() + "Fatal Error : " + msg + "\r\n";
+            break;
+        default:
+            // その他のメッセージタイプは無視
+            break;
+        }
+    }
+
+    // 既存のメッセージハンドラを呼び出す
+    if (s_prevMsgHandler) {
+        s_prevMsgHandler(type, context, msg);
+    }
+
+    if (type == QtFatalMsg) abort();
+
+    inHandler = false;
 }
 
 MainWindow::~MainWindow()
 {
-    if(!silent)bgm->stop();
+    //試合を停止
+    this->clock->stop();
+
+    //BGMを停止
+    if(!silent && this->startup->music_text != "None")bgm->stop();
+
+    //メッセージハンドラをもとに戻す
+	qInstallMessageHandler(s_prevMsgHandler);
+    s_prevMsgHandler = nullptr;
+    s_instance = nullptr;
 
     auto ret = QMessageBox::information(this, "", tr("続けてサーバーを起動しますか。"), QMessageBox::Yes, QMessageBox::No);
 
     delete ui;
 
+	//サーバー再起動
     if(ret == QMessageBox::Yes){
         QStringList argv = QApplication::arguments();
 
@@ -263,8 +325,6 @@ void MainWindow::StepGame()
         this->win = Judge();
 
         if(win != GameSystem::WINNER::CONTINUE){
-            if(!silent)bgm->stop();
-
             player++;
             player %= TEAM_COUNT;
 
@@ -384,15 +444,17 @@ void MainWindow::Finish(GameSystem::WINNER winner)
     }
     log << this->ui->WinnerLabel->text() << "\r\n";
 
-    if(!silent)bgm->stop();
+    //BGMを停止
+    if(!silent && this->startup->music_text != "None")bgm->stop();
 
+    //試合終了時のファンファーレを再生
     if(!silent){
         bgm = new QMediaPlayer;
         audio_output = new QAudioOutput;
         bgm->setAudioOutput(audio_output);
         //connect(bgm, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-        bgm->setSource(QUrl("qrc:/Sound/ji_023.wav"));
-        audio_output->setVolume(50);
+        bgm->setSource(QUrl("qrc:/Sound/ji_023.mp3"));
+        audio_output->setVolume(audio_volume);
         bgm->play();
     }
 

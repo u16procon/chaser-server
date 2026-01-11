@@ -27,6 +27,6 @@
         <file>Image/Light/Item.png</file>
         <file>Image/Light/Look.png</file>
         <file>Image/Light/Search.png</file>
-        <file>Sound/ji_023.wav</file>
+        <file>Sound/ji_023.mp3</file>
     </qresource>
 </RCC>
