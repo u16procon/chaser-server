@@ -209,7 +209,7 @@ QString TCPClient::GetTeamName()
                 nameLabel.setText(lineText + nextChar);
             }
             //次の文字が字形選択子で絵文字用の異体字セレクタの場合は、次のQCharも連結する
-            else if(i + 1 < namebuf.length() && (namebuf[i + 1] == "\uFE0E" || namebuf[i + 1] == "\uFE0F")){
+            else if(i + 1 < namebuf.length() && (QString(namebuf[i + 1]) == "\uFE0E" || QString(namebuf[i + 1]) == "\uFE0F")){
                 i++;
                 nextChar += namebuf[i];
                 nameLabel.setText(lineText + nextChar);
