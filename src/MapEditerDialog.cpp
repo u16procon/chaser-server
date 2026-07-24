@@ -47,6 +47,7 @@ MapEditerDialog::MapEditerDialog(GameSystem::Map map, QWidget *parent) :
 
     //ランダム生成ボタン
     connect(ui->randomGenerateButton, &QPushButton::pressed, this, &MapEditerDialog::randomGenerateButtonPressed);
+    connect(ui->randomGenerateButtonOld, &QPushButton::pressed, this, &MapEditerDialog::randomGenerateButtonPressedOld);
 }
 
 MapEditerDialog::~MapEditerDialog()
@@ -178,6 +179,7 @@ void MapEditerDialog::ReCount()
     ui->ObjectCounter->item(1)->setText("×" + QString(QString::number(counter)));
 }
 
+
 //ランダムマップの生成しなおし
 void MapEditerDialog::randomGenerateButtonPressed()
 {
@@ -197,11 +199,32 @@ void MapEditerDialog::randomGenerateButtonPressed()
     paintEvent(nullptr);
     ReCount();
     update();
+}
 
-    if(this->ui->BlockSpin->value() % 2 != 0) // ブロック数が奇数なら警告
+
+//ランダムマップの生成しなおし(旧仕様)
+void MapEditerDialog::randomGenerateButtonPressedOld()
+{
+    auto fieldSizeText = ui->comboBox->currentText();
+
+    if (fieldSizeText == "広域(21x17)") {
+        this->ui->widget->field.SetSize(QPoint(21, 17), ui->BlockSpin->value(), ui->ItemSpin->value(), true);
+    }
+    else if (fieldSizeText == "決戦(15x17)") {
+        this->ui->widget->field.SetSize(QPoint(15, 17), ui->BlockSpin->value(), ui->ItemSpin->value(), true);
+    }
+
+    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::COOL)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::COOL)];
+    this->ui->widget->team_pos[static_cast<int>(GameSystem::TEAM::HOT)] = this->ui->widget->field.team_first_point[static_cast<int>(GameSystem::TEAM::HOT)];
+
+    ui->widget->setMap(ui->widget->field);
+    paintEvent(nullptr);
+    ReCount();
+    update();
+
+    if (this->ui->BlockSpin->value() % 2 != 0) // ブロック数が奇数なら警告
         QMessageBox::information(this, tr("警告"), tr("ブロックは必ず偶数個で生成されます"));
 
-    if(this->ui->ItemSpin->value() % 2 == 0) // アイテム数が偶数なら警告
+    if (this->ui->ItemSpin->value() % 2 == 0) // アイテム数が偶数なら警告
         QMessageBox::information(this, tr("警告"), tr("アイテムは必ず奇数個で生成されます"));
-
 }
