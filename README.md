@@ -64,7 +64,7 @@ Imageフォルダがない場合は新規作成してください。
 
 ## 開発環境(Qt6)
 - Windows 11 25H2
-- Qt Creator 19.0.2
+- Qt Creator 20.0.0
 - Desktop Qt 6.10.3 MinGW 64-bit
 
 ## 開発環境(Qt5)
