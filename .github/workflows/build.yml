@@ -45,7 +45,7 @@ jobs:
 
           echo "Build"
           mkdir build && cd build
-          qmake ../src/AsahikawaProcon-Server.pro ${{ matrix.qmake_args }}
+          qmake ../src/AsahikawaProcon-Server.pro "CONFIG+=release" ${{ matrix.qmake_args }}
           make -j$(nproc)
 
           echo "Extract linuxdeployqt AppImage"
