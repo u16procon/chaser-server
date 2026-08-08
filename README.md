@@ -63,9 +63,9 @@ Imageフォルダがない場合は新規作成してください。
 * **通信タイムアウト時間** TCPクライアントにおけるレスポンスの待ち時間です。長ければ長いほどクライアントがタイムアウトしにくくなります。
 
 ## 開発環境(Qt6)
-- Windows 11 24H2
-- Qt Creator 17.0.2
-- Desktop Qt 6.9.3 MinGW 64-bit
+- Windows 11 25H2
+- Qt Creator 20.0.0
+- Desktop Qt 6.10.3 MinGW 64-bit
 
 ## 開発環境(Qt5)
 - MacOSX 10.11.3 ElCapitan

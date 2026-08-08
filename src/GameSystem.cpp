@@ -45,9 +45,9 @@ GameSystem::Map::Map():
     size(DEFAULT_MAP_WIDTH,DEFAULT_MAP_HEIGHT),
     texture_dir_path(":/Image/Jewel"){
 }
-void GameSystem::Map::SetSize(QPoint size, int block_num, int item_num){
+void GameSystem::Map::SetSize(QPoint size, int block_num, int item_num, bool isOldMap){
     this->size = size;
-    this->CreateRandomMap(block_num, item_num);
+    this->CreateRandomMap(block_num, item_num, isOldMap);
 }
 
 QPoint GameSystem::Map::MirrorPoint(const QPoint& pos){
@@ -86,7 +86,7 @@ bool GameSystem::Map::Import(QString Filename){
 
             //チーム初期位置
             for(int i=0;i<TEAM_COUNT;i++){
-                if(str[0]==GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i))[0]){
+                if(str[0]==GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)).at(0)){
                     QStringList list = str.remove(0,2).split(",");
                     team_first_point[i] = QPoint(list[0].toInt(),list[1].toInt());
                 }
@@ -106,13 +106,12 @@ bool GameSystem::Map::Export(QString Filename){
     QString fileExt = Filename.split("/").last().split(".").last();
 
     //Log出力時は追記モードでファイルを開く
-    if (fileExt == "txt") {
-        file.open(QIODevice::WriteOnly | QIODevice::Append);
-    } else {
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::information(nullptr, "ファイルを開けません", file.errorString());
-            return false;
-        }
+    QIODevice::OpenMode openMode = (fileExt == "txt") ? 
+        (QIODevice::WriteOnly | QIODevice::Append) : QIODevice::WriteOnly;
+
+    if (!file.open(openMode)) {
+        QMessageBox::information(nullptr, "ファイルを開けません", file.errorString());
+        return false;
     }
 
     //Map出力
@@ -122,7 +121,7 @@ bool GameSystem::Map::Export(QString Filename){
     stream << "N:" + outname << "\n";
     stream << "T:" + QString::number(this->turn) + "\n";
     stream << "S:" + QString::number(size.x()) + "," + QString::number(size.y()) + "\n";
-    for(auto v1 : field){
+    for(auto v1 : std::as_const(field)){
         stream << "D:";
         for(auto it = v1.begin();it != v1.end();it++){
             stream << QString::number(static_cast<int>(*it));
@@ -131,7 +130,7 @@ bool GameSystem::Map::Export(QString Filename){
         stream << "\n";
     }
     for(int i=0;i<TEAM_COUNT;i++){
-        stream << QString(GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i))[0])
+        stream << QString(GameSystem::TEAM_PROPERTY::getTeamName(static_cast<GameSystem::TEAM>(i)).at(0))
                 + ":"
                 + QString::number(team_first_point[i] .x())
                 + ","
@@ -144,107 +143,232 @@ bool GameSystem::Map::Export(QString Filename){
     return true;
 }
 
+
+//大会ルール(https://www.procon-asahikawa.org/files/U16Procon-RuleBookV301.pdf)
+//に則り、ブロックを置いてはいけない場所の場合はfalseを返す
+bool GameSystem::Map::CheckBlockRole(QPoint pos) {
+	//プレイヤーの初期位置にブロックがあってはいけない
+	if (pos == team_first_point[0] || pos == team_first_point[1])
+		return false;
+
+    //X軸に対するSearchをしたとき、その終点にブロックがあってはいけない
+    else if (pos == team_first_point[0] + QPoint(9, 0) || pos == team_first_point[0] + QPoint(-9, 0))
+        return false;
+    else if (pos == team_first_point[1] + QPoint(9, 0) || pos == team_first_point[1] + QPoint(-9, 0))
+        return false;
+    
+    //Y軸に対するSearchをしたとき、その終点にブロックがあってはいけない
+    else if (pos == team_first_point[0] + QPoint(0, 9) || pos == team_first_point[0] + QPoint(0, -9))
+        return false;
+    else if (pos == team_first_point[1] + QPoint(0, 9) || pos == team_first_point[1] + QPoint(0, -9))
+        return false;
+
+
+    //外周、かつ、プレイヤーのSearch範囲(9マス以内)にブロックがあってはいけない
+	for (int i = 0; i < TEAM_COUNT; i++) {
+		if (
+            (pos.x() == 0 || pos.x() == size.x() - 1) && // 外周(X=0 or X=size.x()-1)、かつ、
+			(pos.y() == team_first_point[i].y()) && // ブロックを置こうとしているY座標が、プレイヤーのY座標と同じ、かつ、
+			(team_first_point[i].x() - 9 <= pos.x() && pos.x() <= team_first_point[i].x() + 9)) // プレイヤーのSearch範囲(X軸)なら、ブロックであってはいけない
+			
+            return false;
+
+		if (
+            (pos.y() == 0 || pos.y() == size.y() - 1) && // 外周(Y=0 or Y=size.y()-1)、かつ、
+			(pos.x() == team_first_point[i].x()) && // ブロックを置こうとしているX座標が、プレイヤーのX座標と同じ、かつ、
+			(team_first_point[i].y() - 9 <= pos.y() && pos.y() <= team_first_point[i].y() + 9)) // プレイヤーのSearch範囲(Y軸)なら、ブロックであってはいけない
+			
+            return false;
+	}
+    
+    return true;
+}
+
+
 //大会ルール(https://www.procon-asahikawa.org/files/U16Procon-RuleBookV231.pdf)
 //に則り、ブロックを置いてはいけない場所の場合はfalseを返す
-bool GameSystem::Map::CheckBlockRole(QPoint pos){
+bool GameSystem::Map::CheckBlockRoleOld(QPoint pos) {
+    //プレイヤーの初期位置にブロックがあってはいけない
+    if (pos == team_first_point[0] || pos == team_first_point[1])
+        return false;
+
     //外周にブロックがあってはいけない
-    if(pos.x() == 0 || pos.x() == size.x()-1 || pos.y() == 0|| pos.y() == size.y()-1)
+    else if (pos.x() == 0 || pos.x() == size.x() - 1 || pos.y() == 0 || pos.y() == size.y() - 1)
         return false;
+
+    //X軸に対するSearchをしたとき、その終点にブロックがあるのはOK
     //Y軸に対するSearchをしたとき、その終点にブロックがあってはいけない
-    else if(pos == team_first_point[0] + QPoint(0, 9) || pos == team_first_point[0] + QPoint(0, -9))
+    else if (pos == team_first_point[0] + QPoint(0, 9) || pos == team_first_point[0] + QPoint(0, -9))
         return false;
-    else if(pos == team_first_point[1] + QPoint(0, 9) || pos == team_first_point[1] + QPoint(0, -9))
+    else if (pos == team_first_point[1] + QPoint(0, 9) || pos == team_first_point[1] + QPoint(0, -9))
         return false;
     else
         return true;
 }
 
-//大会ルールの「A 基本タイプ」に準拠してブロック、アイテム、COOLとHOTをランダムに配置
-//*A 基本タイプ: COOLとHOTの周囲8マスにアイテムがない
-//デフォルトではブロック20個、アイテム50個を配置
-void GameSystem::Map::CreateRandomMap(int block_num, int item_num){
+void GameSystem::Map::CreateRandomMap(int block_num, int item_num, bool isOldMap){
     turn = 100;
-    name = "[RANDOM MAP]";
 
-    //一様ノルム(L∞ノルム)
-    //詳細はWikipediaを参照
-    auto UniformNorm = [](QPoint pos){
-        return std::abs(pos.x()) > std::abs(pos.y()) ? std::abs(pos.x()) : std::abs(pos.y());
-    };
+    //大会ルール(v3.0.1)に準拠してブロック、アイテム、COOLとHOTをランダムに配置
+    //デフォルトではブロック20個、アイテム50個を配置
+    if (!isOldMap) 
+    {
+        name = "[RANDOM MAP]";
 
-    //大会ルールに準拠した位置にCOOLとHOTが配置されるようにする
-    do{
-        auto pos = QPoint(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
-        //盤面の真ん中にあるアイテムの周りには配置されないように
-        if(UniformNorm(pos - QPoint(size.x()/2, size.y()/2)) <= 1)
-            continue;
-        if(pos.x() < size.x()/2 || //盤面の左側にCOOLが配置されるように
-          (pos.x() == size.x()/2 && pos.y() < size.y()/2)){ //盤面の真ん中の縦列に生成される場合は、そのy座標が0～size.y()/2までに生成されるように
-            team_first_point[0] = pos;
-            break;
+        //大会ルールに準拠した位置にCOOLとHOTが配置されるようにする
+        do {
+            auto pos = QPoint(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
+            
+            //テスト用座標
+            //pos = QPoint(3, 10);
+
+            if (pos.x() < size.x() / 2 || //盤面の左側にCOOLが配置されるように
+                (pos.x() == size.x() / 2 && pos.y() < size.y() / 2)) { //盤面の真ん中の縦列に生成される場合は、そのy座標が0～size.y()/2までに生成されるように
+                team_first_point[0] = pos;
+                break;
+            }
+
+        } while (true);
+
+        //点対称に配置
+        team_first_point[1] = MirrorPoint(team_first_point[0]);
+
+        field.clear();
+        for (int i = 0; i < size.y(); i++) {
+            field.push_back(QVector<GameSystem::MAP_OBJECT>(size.x()));
         }
 
-    }while(true);
+        //ブロック配置
+        for (int i = 0; i < block_num / 2; i++) {
+            QPoint pos(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
 
-    //点対称に配置
-    team_first_point[1] = MirrorPoint(team_first_point[0]);
+            if (CheckBlockRole(pos) &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK ) { 
 
-    field.clear();
-    for(int i=0;i<size.y();i++){
-        field.push_back(QVector<GameSystem::MAP_OBJECT>(size.x()));
-    }
+                field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::BLOCK;
 
-    //ブロック配置
-    for(int i=0;i<block_num/2;i++){
-        QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
-
-        auto mirrorPos = MirrorPoint(pos);
-
-        if(CheckBlockRole(pos) &&
-            pos != team_first_point[0] && //プレイヤーとブロックを置こうとしている位置が同じであればブロックを置かない
-            pos != team_first_point[1] && //(プレイヤーが初期位置でブロックにめり込まないようにする)
-            field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK &&
-            pos != QPoint(size.x()/2, size.y()/2 )){ //真ん中は必ずアイテム(ブロックは置けない)
-
-            field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::BLOCK;
-
-            //点対称に配置
-            field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::BLOCK;
-        }else{
-            //ブロックが大会ルールに準拠してない場合は、もう一度乱数を回す
-            i--;
-            continue;
+                //点対称に配置
+                auto mirrorPos = MirrorPoint(pos);
+                field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::BLOCK;
+            }
+            else {
+                //ブロックが大会ルールに準拠してない場合は、もう一度乱数を回す
+                i--;
+                continue;
+            }
         }
-    }
 
-    //アイテム配置
-    for(int i=0;i<item_num/2;i++){
-        QPoint pos(QRandomGenerator::global()->generate() % size.x(),QRandomGenerator::global()->generate() % size.y());
-        auto mirrorPos = MirrorPoint(pos);
+        //アイテム配置
+        for (int i = 0; i < item_num / 2; i++) {
+            QPoint pos(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
 
-        bool around_item_flag = true;
+            if (pos != team_first_point[0] && pos != team_first_point[1] &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::ITEM &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK ) { 
 
-        //プレイヤーとアイテムを置こうとしている位置の一様ノルムが1以下なら、アイテムを置かない
-        //(プレイヤーが初期位置でGetReadyしたときに、アイテムがない状態にする)
-        //これは「A 基本タイプ」の要件
-        if(UniformNorm(team_first_point[0]  - pos) <= 1 || UniformNorm(team_first_point[1] - pos) <= 1)
-            around_item_flag=false;
+                field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::ITEM;
 
-        if(around_item_flag &&
-            field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::ITEM &&
-            field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK &&
-            pos != QPoint(size.x()/2, size.y()/2) ){ //真ん中は後の処理で必ずアイテムにするので、ここでは置かない
-
-            field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::ITEM;
-            //点対称に配置
-            field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::ITEM;
-        }else{
-            i--;
-            continue;
+                //点対称に配置
+                auto mirrorPos = MirrorPoint(pos);
+                field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::ITEM;
+            }
+            else {
+                i--;
+                continue;
+            }
         }
+
     }
-    // 真ん中は必ずアイテムにする
-    field[size.y()/2][size.x()/2] = GameSystem::MAP_OBJECT::ITEM;
+
+    //大会ルール(v2.3.1)の「A 基本タイプ」に準拠してブロック、アイテム、COOLとHOTをランダムに配置
+    //*A 基本タイプ: COOLとHOTの周囲8マスにアイテムがない
+    //デフォルトではブロック20個、アイテム50個を配置
+    else
+    {
+        name = "[OLD RANDOM MAP]";
+
+        //一様ノルム(L∞ノルム)
+        //詳細はWikipediaを参照
+        auto UniformNorm = [](QPoint pos) {
+            return std::abs(pos.x()) > std::abs(pos.y()) ? std::abs(pos.x()) : std::abs(pos.y());
+            };
+
+        //大会ルールに準拠した位置にCOOLとHOTが配置されるようにする
+        do {
+            auto pos = QPoint(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
+            //盤面の真ん中にあるアイテムの周りには配置されないように
+            if (UniformNorm(pos - QPoint(size.x() / 2, size.y() / 2)) <= 1)
+                continue;
+            if (pos.x() < size.x() / 2 || //盤面の左側にCOOLが配置されるように
+                (pos.x() == size.x() / 2 && pos.y() < size.y() / 2)) { //盤面の真ん中の縦列に生成される場合は、そのy座標が0～size.y()/2までに生成されるように
+                team_first_point[0] = pos;
+                break;
+            }
+
+        } while (true);
+
+        //点対称に配置
+        team_first_point[1] = MirrorPoint(team_first_point[0]);
+
+        field.clear();
+        for (int i = 0; i < size.y(); i++) {
+            field.push_back(QVector<GameSystem::MAP_OBJECT>(size.x()));
+        }
+
+        //ブロック配置
+        for (int i = 0; i < block_num / 2; i++) {
+            QPoint pos(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
+
+            auto mirrorPos = MirrorPoint(pos);
+
+            if (CheckBlockRoleOld(pos) &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK &&
+                pos != QPoint(size.x() / 2, size.y() / 2)) { //真ん中は必ずアイテム(ブロックは置けない)
+
+                field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::BLOCK;
+
+                //点対称に配置
+                field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::BLOCK;
+            }
+            else {
+                //ブロックが大会ルールに準拠してない場合は、もう一度乱数を回す
+                i--;
+                continue;
+            }
+        }
+
+        //アイテム配置
+        for (int i = 0; i < item_num / 2; i++) {
+            QPoint pos(QRandomGenerator::global()->generate() % size.x(), QRandomGenerator::global()->generate() % size.y());
+            auto mirrorPos = MirrorPoint(pos);
+
+            bool around_item_flag = true;
+
+            //プレイヤーとアイテムを置こうとしている位置の一様ノルムが1以下なら、アイテムを置かない
+            //(プレイヤーが初期位置でGetReadyしたときに、アイテムがない状態にする)
+            //これは「A 基本タイプ」の要件
+            if (UniformNorm(team_first_point[0] - pos) <= 1 || UniformNorm(team_first_point[1] - pos) <= 1)
+                around_item_flag = false;
+
+            if (around_item_flag &&
+                pos != team_first_point[0] && pos != team_first_point[1] &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::ITEM &&
+                field[pos.y()][pos.x()] != GameSystem::MAP_OBJECT::BLOCK &&
+                pos != QPoint(size.x() / 2, size.y() / 2)) { //真ん中は後の処理で必ずアイテムにするので、ここでは置かない
+
+                field[pos.y()][pos.x()] = GameSystem::MAP_OBJECT::ITEM;
+                //点対称に配置
+                field[mirrorPos.y()][mirrorPos.x()] = GameSystem::MAP_OBJECT::ITEM;
+            }
+            else {
+                i--;
+                continue;
+            }
+        }
+        // 真ん中は必ずアイテムにする
+        field[size.y() / 2][size.x() / 2] = GameSystem::MAP_OBJECT::ITEM;
+    }
+    
 }
 
 void GameSystem::AroundData::finish(){

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>460</width>
     <height>300</height>
    </rect>
   </property>
@@ -17,10 +17,10 @@
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
@@ -33,7 +33,7 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>311</width>
+           <width>460</width>
            <height>16</height>
           </rect>
          </property>
@@ -49,7 +49,7 @@
           <rect>
            <x>10</x>
            <y>40</y>
-           <width>341</width>
+           <width>460</width>
            <height>16</height>
           </rect>
          </property>
@@ -68,10 +68,10 @@
    <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>

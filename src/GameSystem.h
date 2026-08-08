@@ -27,8 +27,12 @@ public:
     //const static int MAP_HEIGHT = 17;
 
     //通常マップサイズ
-    const static int DEFAULT_MAP_WIDTH  = 15;
-    const static int DEFAULT_MAP_HEIGHT = 17;
+    static constexpr int DEFAULT_MAP_WIDTH  = 15;
+    static constexpr int DEFAULT_MAP_HEIGHT = 17;
+
+    //通常アイテム・ブロック数
+    static constexpr int DEFAULT_ITEM_NUM = 50;
+	static constexpr int DEFAULT_BLOCK_NUM = 20;
 
     //チーム
     enum class TEAM{
@@ -90,7 +94,7 @@ public:
         ERASE,
     };
     //ゲーム盤
-    struct Map{
+    struct Map{        
         Field<GameSystem::MAP_OBJECT> field;
         Field<GameSystem::Discoverer> discover;
         int turn;                       //ターン
@@ -101,13 +105,14 @@ public:
 
         Map();
 
-        void SetSize(QPoint size, int block_num = 20, int item_num = 51);
+        void SetSize(QPoint size, int block_num = DEFAULT_BLOCK_NUM, int item_num = DEFAULT_ITEM_NUM, bool isOldMap = false);
         QPoint MirrorPoint(const QPoint& pos);
 
-        void CreateRandomMap(int block_num = 20, int item_num = 51);
+        void CreateRandomMap(int block_num = DEFAULT_BLOCK_NUM, int item_num = DEFAULT_ITEM_NUM, bool isOldMap = false);
         bool Import(QString Filename);
         bool Export(QString Filename);
         bool CheckBlockRole(QPoint pos);
+        bool CheckBlockRoleOld(QPoint pos);
     };
 
     //クライアントの行動

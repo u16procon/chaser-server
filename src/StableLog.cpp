@@ -7,7 +7,11 @@ void StableLog::Write(const QString &str) const
 
     //追加書き込みオープン
     QFile file(m_filename);
-    file.open(QIODevice::Append | QIODevice::Unbuffered | QIODevice::Text);
+    if(!file.open(QIODevice::Append | QIODevice::Unbuffered | QIODevice::Text)){
+        qDebug() << "ログファイルのオープンに失敗しました : ";
+        qDebug() << file.errorString();
+        return;
+    }
 
     //書いて
     file.write(str.toUtf8());
@@ -39,7 +43,11 @@ StableLog::StableLog(QString filename)
     QTextStream log;
 
     //ログファイルオープン
-    file.open(QIODevice::WriteOnly);
+    if(!file.open(QIODevice::WriteOnly)){
+        qDebug() << "ログファイルのオープンに失敗しました : ";
+        qDebug() << file.errorString();
+        return;
+    }
 
     log.setDevice(&file);
     log << "--Stable Log--\r\n";

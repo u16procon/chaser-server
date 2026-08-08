@@ -13,20 +13,20 @@ jobs:
           - arch: x86_64
             os: ubuntu-22.04
             qt_host: linux
-            qt_version: "6.9.3"
+            qt_version: "6.10.3"
             qt_arch: linux_gcc_64
             qt_dir: gcc_64
             qmake_args: ""
 
           - arch: aarch64
-            os: ubuntu-22.04-arm
+            os: ubuntu-24.04-arm
             qt_host: linux_arm64
-            qt_version: "6.7.3" # Qt 6.8.3以降だとglibcが新しすぎるためビルド不可
+            qt_version: "6.10.3"
             qt_arch: linux_gcc_arm64
             qt_dir: gcc_arm64
             qmake_args: "QMAKE_CC=/usr/bin/gcc QMAKE_CXX=/usr/bin/g++ QMAKE_LINK=/usr/bin/g++ -spec linux-g++"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Qt & Build
         run: |
           echo "Install Build Tools"
@@ -45,7 +45,7 @@ jobs:
 
           echo "Build"
           mkdir build && cd build
-          qmake ../src/AsahikawaProcon-Server.pro ${{ matrix.qmake_args }}
+          qmake ../src/AsahikawaProcon-Server.pro "CONFIG+=release" ${{ matrix.qmake_args }}
           make -j$(nproc)
 
           echo "Extract linuxdeployqt AppImage"
@@ -62,7 +62,7 @@ jobs:
           ./squashfs-root/usr/bin/linuxdeployqt ./AsahikawaProcon-Server -appimage -unsupported-allow-new-glibc
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: CHaserServer-${{ matrix.arch }}
           path: ./build/*.AppImage

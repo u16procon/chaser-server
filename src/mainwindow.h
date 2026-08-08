@@ -41,10 +41,16 @@ private:
 
     QFile* file;   //ログファイル
     StableLog log; //ログストリーム
-    int anime_map_time   = 6000; //マップ構築アニメーション時間
-    int anime_team_time  = 2000; //チーム配置アニメーション時間
-    int anime_blind_time = 1000; //まっくらアニメーション時間
-	float audio_volume = 0.8f; //音量
+
+    constexpr static int DEFAULT_ANIME_MAP_TIME = 6000; //マップ構築アニメーション時間
+    constexpr static int DEFAULT_ANIME_TEAM_TIME = 2000; //チーム配置アニメーション時間
+    constexpr static int DEFAULT_ANIME_BLIND_TIME = 1000; //まっくらアニメーション時間
+    constexpr static float DEFAULT_AUDIO_VOLUME = 0.8f; //音量
+
+    int anime_map_time   = DEFAULT_ANIME_MAP_TIME; //マップ構築アニメーション時間
+    int anime_team_time  = DEFAULT_ANIME_TEAM_TIME; //チーム配置アニメーション時間
+    int anime_blind_time = DEFAULT_ANIME_BLIND_TIME; //まっくらアニメーション時間
+	float audio_volume = DEFAULT_AUDIO_VOLUME; //音量
 
     GameSystem::WINNER win;
 
